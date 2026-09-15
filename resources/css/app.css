@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+ * { -webkit-tap-highlight-color: transparent; }
+
+  /* Sidebar width transitions */
+  #sidebar { transition: width 0.22s cubic-bezier(0.4,0,0.2,1); }
+
+  /* Submenu slide */
+  .submenu { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+  .submenu.open { max-height: 260px; }
+
+  /* Hide text when collapsed */
+  #sidebar.collapsed .nav-label,
+  #sidebar.collapsed .logo-text,
+  #sidebar.collapsed .nav-chevron,
+  #sidebar.collapsed .sub-indent { display: none; }
+
+  #sidebar.collapsed .submenu { display: none !important; }
+  #sidebar.collapsed .nav-item { justify-content: center; }
+
+  .nav-item{
+    
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+ 
+ 
+  /* Hide search box when collapsed */
+  #sidebar.collapsed #searchBox { display: none; }
+  #sidebar.collapsed #searchEmptyMsg { display: none; }
+
+  /* Tooltip */
+  .nav-tooltip {
+    position: fixed;
+    left: 68px;
+    background: #111827;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 9999;
+    transition: opacity 0.12s;
+  }
+  .nav-tooltip.show { opacity: 1; }
+
+  /* Scrollbar */
+  #sideNav::-webkit-scrollbar { width: 3px; }
+  #sideNav::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 4px; }
+
+  /* Chevron rotate */
+  .has-sub.open > .nav-chevron { transform: rotate(180deg); }
+  .nav-chevron { transition: transform 0.2s; }
