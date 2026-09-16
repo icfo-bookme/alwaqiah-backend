@@ -42,6 +42,15 @@ jobs:
               git clone "$REPO_URL" "$APP_DIR"
             fi
 
+            # The repo may be owned by a different user than the SSH user —
+            # trust the dir for git and hand it over to the current user.
+            git config --global --add safe.directory "$APP_DIR"
+            if [ "$(id -u)" -eq 0 ]; then
+              chown -R "$(id -u):$(id -g)" "$APP_DIR" || true
+            else
+              sudo chown -R "$(id -u):$(id -g)" "$APP_DIR" || true
+            fi
+
             cd "$APP_DIR"
 
             # Make server code identical to main (refresh token each run)
