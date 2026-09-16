@@ -1,0 +1,96 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Build frontend assets (Vite)
+        run: |
+          npm ci
+          npm run build
+
+      - name: Sync code on VPS (git pull)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME || 'root' }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script_stop: true
+          script: |
+            set -e
+            APP_DIR="/var/www/alwaqiah-backend"
+            CLEAN_URL="https://github.com/icfo-bookme/alwaqiah-backend.git"
+            REPO_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/icfo-bookme/alwaqiah-backend.git"
+
+            # First run: clone the repo
+            if [ ! -d "$APP_DIR/.git" ]; then
+              git clone "$REPO_URL" "$APP_DIR"
+            fi
+
+            cd "$APP_DIR"
+
+            # Make server code identical to main (refresh token each run)
+            git remote set-url origin "$REPO_URL"
+            git fetch origin main
+            git reset --hard origin/main
+            git remote set-url origin "$CLEAN_URL"
+
+            # First run only: create .env and generate APP_KEY
+            if [ ! -f .env ]; then
+              cp .env.example .env
+              php artisan key:generate --force
+              echo "=== .env created from .env.example — fill DB creds & re-run deploy ==="
+            fi
+
+      - name: Upload built assets
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME || 'root' }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: "public/build/*"
+          target: "/var/www/alwaqiah-backend/public/"
+          strip_components: 2
+
+      - name: Install dependencies & finalize
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME || 'root' }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script_stop: true
+          script: |
+            set -e
+            cd /var/www/alwaqiah-backend
+
+            composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+
+            php artisan migrate --force
+            php artisan storage:link || true
+            php artisan optimize
+
+            # Fix permissions for the web server user
+            if [ "$(id -u)" -eq 0 ]; then
+              chown -R www-data:www-data storage bootstrap/cache || true
+            else
+              sudo chown -R www-data:www-data storage bootstrap/cache || true
+            fi
+
+            echo "=== Deploy finished at $(date) ==="
