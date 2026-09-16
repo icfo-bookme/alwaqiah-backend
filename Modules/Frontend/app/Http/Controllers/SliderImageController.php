@@ -71,7 +71,8 @@ class SliderImageController extends Controller
     public function reorder(Request $request)
     {
         return response()->json($this->sliderImageService->reorderSliderImages(
-            $request->input('order', [])
+            $request->input('order', []),
+            (int) $request->input('start', 0)
         ));
     }
 }

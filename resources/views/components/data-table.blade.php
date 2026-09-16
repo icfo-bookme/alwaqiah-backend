@@ -24,7 +24,7 @@
 
             @if ($buttonId)
                 <button id="{{ $buttonId }}"
-                    class="bg-blue-900 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2 transition-all duration-200 text-sm font-medium whitespace-nowrap active:scale-95">
+                    class="bg-[#047354] hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2 transition-all duration-200 text-sm font-medium whitespace-nowrap active:scale-95">
                     <i class="fa fa-plus-circle"></i> {{ $buttonText }}
                 </button>
             @endif

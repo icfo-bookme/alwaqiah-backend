@@ -9,20 +9,19 @@ use Yajra\DataTables\DataTables;
 
 class YoutubeVideoService
 {
-
     public function getYoutubeVideoDataTable(Request $request)
     {
         $query = YoutubeVideo::select(
-                'youtube_videos.id',
-                'youtube_videos.title',
-                'youtube_videos.slug',
-                'youtube_videos.youtube_video_id',
-                'youtube_videos.thumbnail',
-                'youtube_videos.sort_order',
-                'youtube_videos.is_active',
-                'youtube_videos.published_at',
-                'youtube_videos.created_at'
-            )
+            'youtube_videos.id',
+            'youtube_videos.title',
+            'youtube_videos.slug',
+            'youtube_videos.youtube_video_id',
+            'youtube_videos.thumbnail',
+            'youtube_videos.sort_order',
+            'youtube_videos.is_active',
+            'youtube_videos.published_at',
+            'youtube_videos.created_at'
+        )
             ->orderBy('youtube_videos.sort_order')
             ->orderBy('youtube_videos.id');
 
@@ -34,7 +33,7 @@ class YoutubeVideoService
             ->addIndexColumn()
             ->editColumn('thumbnail', function (YoutubeVideo $video) {
                 return $video->thumbnail
-                    ? '<img src="' . e($video->thumbnail) . '" alt="' . e($video->title) . '" class="h-10 w-16 rounded-md object-cover ring-1 ring-gray-200">'
+                    ? '<img src="'.e($video->thumbnail).'" alt="'.e($video->title).'" class="h-10 w-16 rounded-md object-cover ring-1 ring-gray-200">'
                     : '&mdash;';
             })
             ->editColumn('is_active', function (YoutubeVideo $video) {
@@ -50,8 +49,8 @@ class YoutubeVideoService
             })
             ->addColumn('action', function (YoutubeVideo $video) {
                 return view('components.action-buttons', [
-                    'id'     => $video->id,
-                    'edit'   => 'youtubeVideoEdit',
+                    'id' => $video->id,
+                    'edit' => 'youtubeVideoEdit',
                     'delete' => 'youtubeVideoDelete',
                 ])->render();
             })
@@ -78,16 +77,16 @@ class YoutubeVideoService
                 $video = YoutubeVideo::create($data);
 
                 return [
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Video created successfully.',
-                    'video'   => $video->fresh(),
+                    'video' => $video->fresh(),
                 ];
             });
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error saving video: ' . $e->getMessage(),
-                'video'   => null,
+                'status' => 'error',
+                'message' => 'Error saving video: '.$e->getMessage(),
+                'video' => null,
             ];
         }
     }
@@ -106,21 +105,67 @@ class YoutubeVideoService
                 $video->update($data);
 
                 return [
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Video updated successfully.',
-                    'video'   => $video->fresh(),
+                    'video' => $video->fresh(),
                 ];
             });
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error updating video: ' . $e->getMessage(),
-                'video'   => null,
+                'status' => 'error',
+                'message' => 'Error updating video: '.$e->getMessage(),
+                'video' => null,
             ];
         }
     }
 
-   
+    /**
+     * Frontend API: all active videos, ordered for display.
+     */
+    public function getFrontendVideos(): array
+    {
+        $videos = YoutubeVideo::where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get([
+                'id',
+                'title',
+                'slug',
+                'youtube_video_id',
+                'youtube_url',
+                'thumbnail',
+                'description',
+                'sort_order',
+                'published_at',
+            ]);
+
+        return [
+            'status' => 'success',
+            'count' => $videos->count(),
+            'videos' => $videos->map(fn (YoutubeVideo $video) => $this->formatFrontendVideo($video))->values()->all(),
+        ];
+    }
+
+    /**
+     * Shape a video for frontend consumption (embed/watch URLs resolved).
+     */
+    private function formatFrontendVideo(YoutubeVideo $video): array
+    {
+        return [
+            'id' => $video->id,
+            'title' => $video->title,
+            'slug' => $video->slug,
+            'description' => $video->description,
+            'youtube_video_id' => $video->youtube_video_id,
+            'youtube_url' => $video->youtube_url,
+            'embed_url' => 'https://www.youtube.com/embed/'.$video->youtube_video_id,
+            'watch_url' => 'https://www.youtube.com/watch?v='.$video->youtube_video_id,
+            'thumbnail' => $video->thumbnail,
+            'sort_order' => $video->sort_order,
+            'published_at' => $video->published_at?->format('Y-m-d H:i:s'),
+        ];
+    }
+
     private function prepareVideoData(array &$data): void
     {
         if (empty($data['youtube_video_id']) && ! empty($data['youtube_url'])) {
@@ -128,7 +173,7 @@ class YoutubeVideoService
         }
 
         if (empty($data['thumbnail']) && ! empty($data['youtube_video_id'])) {
-            $data['thumbnail'] = 'https://img.youtube.com/vi/' . $data['youtube_video_id'] . '/hqdefault.jpg';
+            $data['thumbnail'] = 'https://img.youtube.com/vi/'.$data['youtube_video_id'].'/hqdefault.jpg';
         }
     }
 
@@ -136,15 +181,16 @@ class YoutubeVideoService
     {
         try {
             $video = YoutubeVideo::findOrFail($id);
+
             return [
                 'status' => 'success',
-                'video'  => $video,
+                'video' => $video,
             ];
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'Video not found.',
-                'video'   => null,
+                'video' => null,
             ];
         }
     }
@@ -159,50 +205,49 @@ class YoutubeVideoService
                 $video->delete();
 
                 return [
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Video deleted successfully.',
                 ];
             });
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error deleting video: ' . $e->getMessage(),
+                'status' => 'error',
+                'message' => 'Error deleting video: '.$e->getMessage(),
             ];
         }
     }
 
     /**
      * Persist the new sort order after drag & drop —
-     * each array position becomes the sort_order (1, 2, 3...).
+     * each array position becomes the sort_order, offset by the current page.
      */
-    public function reorderYoutubeVideos(array $orderedIds): array
+    public function reorderYoutubeVideos(array $orderedIds, int $start = 0): array
     {
         try {
             if (empty($orderedIds)) {
                 return [
-                    'status'  => 'error',
+                    'status' => 'error',
                     'message' => 'No order provided.',
                 ];
             }
 
-            return DB::transaction(function () use ($orderedIds) {
+            return DB::transaction(function () use ($orderedIds, $start) {
                 foreach ($orderedIds as $index => $id) {
-                    YoutubeVideo::where('id', (int) $id)->update(['sort_order' => $index + 1]);
+                    YoutubeVideo::where('id', (int) $id)->update(['sort_order' => $start + $index + 1]);
                 }
 
                 return [
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Video order updated successfully.',
                 ];
             });
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error updating video order: ' . $e->getMessage(),
+                'status' => 'error',
+                'message' => 'Error updating video order: '.$e->getMessage(),
             ];
         }
     }
-
 
     private function extractYouTubeId(string $url): ?string
     {

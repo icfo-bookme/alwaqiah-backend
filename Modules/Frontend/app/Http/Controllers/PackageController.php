@@ -72,7 +72,8 @@ class PackageController extends Controller
     public function reorder(Request $request)
     {
         return response()->json($this->packageService->reorderPackages(
-            $request->input('order', [])
+            $request->input('order', []),
+            (int) $request->input('start', 0)
         ));
     }
 

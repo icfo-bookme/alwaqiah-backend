@@ -72,7 +72,10 @@ class IconController extends Controller
     {
         $ids = $request->input('order', []);
 
-        return response()->json($this->iconService->reorderIcons($ids));
+        return response()->json($this->iconService->reorderIcons(
+            $ids,
+            (int) $request->input('start', 0)
+        ));
     }
 
     /**

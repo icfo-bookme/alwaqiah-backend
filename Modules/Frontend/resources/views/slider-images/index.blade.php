@@ -300,13 +300,14 @@
                 filter: 'button, a, input, select',
                 onEnd: function() {
                     const table = $('#sliderImageTable').DataTable();
+                    const pageStart = table.page.info().start;
                     const order = Array.from(tbody.querySelectorAll('tr'))
                         .map(tr => table.row(tr).data()?.id)
                         .filter(id => id !== undefined);
 
                     if (order.length === 0) return;
 
-                    $.post("{{ route('slider-images.reorder') }}", { order: order }, function(res) {
+                    $.post("{{ route('slider-images.reorder') }}", { order: order, start: pageStart }, function(res) {
                         if (res.status === 'success' || res.status === true) {
                             Swal.fire({
                                 toast: true,

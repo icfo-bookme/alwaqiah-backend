@@ -1,8 +1,5 @@
 <div class="nav-tooltip" id="navTooltip"></div>
-
-<!-- ========== SIDEBAR ========== -->
 <aside id="sidebar" class="w-48 bg-white border-r border-gray-200 flex flex-col flex-shrink-0 z-30 overflow-hidden">
-
     <!-- Logo -->
     <div class="h-[60px] bg-[#047354] flex items-center justify-between px-3.5 border-b border-blue-300 flex-shrink-0">
         <div class="flex items-center gap-2 overflow-hidden">
@@ -13,8 +10,6 @@
             </div>
             <span class="logo-text font-semibold text-gray-50 text-[20px] whitespace-nowrap">Alwaqiah</span>
         </div>
-
-
     </div>
 
     <!-- Search Box -->
@@ -70,6 +65,15 @@
             <span class="nav-label font-semibold">Packages</span>
         </a>
 
+        <!-- Flights -->
+        <a href="{{ route('flights.index') }}"
+            class="nav-item flex items-center gap-2.5 px-2 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150 mb-0.5
+    {{ request()->routeIs('flights.index') ? 'bg-[#047354] text-white active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800' }}"
+            data-label="Flights">
+            <i class="fa-solid fa-plane w-4 text-center flex-shrink-0 text-base"></i>
+            <span class="nav-label font-semibold">Flights</span>
+        </a>
+
         <!-- Icons -->
         <a href="{{ route('icons.index') }}"
             class="nav-item flex items-center gap-2.5 px-2 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150 mb-0.5
@@ -77,6 +81,15 @@
             data-label="Icons">
             <i class="fa-solid fa-icons w-4 text-center flex-shrink-0 text-base"></i>
             <span class="nav-label font-semibold">Icons</span>
+        </a>
+
+        <!-- FAQs -->
+        <a href="{{ route('faqs.index') }}"
+            class="nav-item flex items-center gap-2.5 px-2 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 text-sm font-medium transition-colors duration-150 mb-0.5
+    {{ request()->routeIs('faqs.index') ? 'bg-[#047354] text-white active' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800' }}"
+            data-label="FAQs">
+            <i class="fa-solid fa-circle-question w-4 text-center flex-shrink-0 text-base"></i>
+            <span class="nav-label font-semibold">FAQs</span>
         </a>
 
     </nav>

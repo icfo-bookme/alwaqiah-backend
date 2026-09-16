@@ -157,6 +157,66 @@
                 opacity: 0.4;
                 background: #ecfdf5;
             }
+
+            #features-drawer .select2-container {
+                width: 38% !important;
+                flex-shrink: 0;
+            }
+
+            #features-drawer .select2-container .select2-selection--single {
+                height: 42px;
+                border-color: #cbd5e1;
+                border-radius: 0.375rem;
+                display: flex;
+                align-items: center;
+            }
+
+            #features-drawer .select2-container--default .select2-selection--single .select2-selection__rendered {
+                color: #334155;
+                line-height: 40px;
+                padding-left: 0.75rem;
+                padding-right: 1.75rem;
+                width: 100%;
+            }
+
+            #features-drawer .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 40px;
+            }
+
+            #features-drawer .select2-container--default .select2-selection--single .select2-selection__clear {
+                display: none;
+            }
+
+            .feature-icon-option {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                min-width: 0;
+            }
+
+            .feature-icon-option i {
+                width: 1.25rem;
+                flex-shrink: 0;
+                text-align: center;
+                color: #047354;
+            }
+
+            .feature-icon-option span {
+                display: block;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .feature-icon-result {
+                padding: 0.15rem 0;
+            }
+
+            .feature-icon-result span {
+                white-space: normal;
+                line-height: 1.35;
+            }
         </style>
         <script>
             let isSaving = false;
@@ -355,23 +415,92 @@
             /* ==================== Package Features ==================== */
             let featurePackageId = null;
             let isSavingFeatures = false;
+            let iconOptions = [];
 
             function escapeHtml(value) {
                 return $('<div>').text(value ?? '').html();
+            }
+
+            function loadIconOptions() {
+                if (iconOptions.length > 0) {
+                    return $.Deferred().resolve(iconOptions).promise();
+                }
+
+                return $.get("{{ route('icons.options') }}", function(res) {
+                    iconOptions = res.status === 'success' ? (res.icons || []) : [];
+                }).fail(function() {
+                    iconOptions = [];
+                });
+            }
+
+            function featureIconOptions(selectedIcon) {
+                const selected = selectedIcon || '';
+                let foundSelected = selected === '';
+                let options = '<option value="">Select icon</option>';
+
+                iconOptions.forEach(function(icon) {
+                    const value = icon.class || '';
+                    if (value === selected) foundSelected = true;
+
+                    const label = icon.name || value;
+                    options += `<option value="${escapeHtml(value)}" data-icon="${escapeHtml(value)}" data-name="${escapeHtml(label)}" ${value === selected ? 'selected' : ''}>${escapeHtml(label)}</option>`;
+                });
+
+                if (!foundSelected) {
+                    options += `<option value="${escapeHtml(selected)}" data-icon="${escapeHtml(selected)}" selected>${escapeHtml(selected)} (saved)</option>`;
+                }
+
+                return options;
+            }
+
+            function formatFeatureIconOption(option) {
+                if (!option.id) {
+                    return option.text;
+                }
+
+                const iconClass = $(option.element).data('icon') || option.id;
+                const iconName = $(option.element).data('name') || option.text;
+                const isResult = option.element && option.element.parentElement;
+                const className = isResult ? 'feature-icon-option feature-icon-result' : 'feature-icon-option';
+
+                return $(
+                    `<span class="${className}">
+                        <i class="${escapeHtml(iconClass)}"></i>
+                        <span title="${escapeHtml(iconClass)}">${escapeHtml(iconName)}</span>
+                    </span>`
+                );
+            }
+
+            function initFeatureIconSelect($select) {
+                if (typeof $.fn.select2 === 'undefined') return;
+
+                $select.select2({
+                    width: 'style',
+                    dropdownParent: $('#features-drawer'),
+                    placeholder: 'Select icon',
+                    allowClear: false,
+                    templateResult: formatFeatureIconOption,
+                    templateSelection: formatFeatureIconOption,
+                    escapeMarkup: function(markup) {
+                        return markup;
+                    }
+                });
             }
 
             function featureRowTemplate(feature) {
                 feature = feature || {};
 
                 const id = feature.id ?? '';
-                const icon = escapeHtml(feature.icon);
+                const icon = feature.icon ?? '';
                 const title = escapeHtml(feature.title);
 
                 return `
                     <div class="feature-row flex items-center gap-2 animate-fade" data-id="${id}">
-                        <input type="text"
+                        <select
                             class="feature-icon w-1/3 border border-slate-300 rounded-md p-2 bg-white text-slate-800 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-                            placeholder="Icon (fa-solid fa-check)" value="${icon}">
+                            aria-label="Feature icon">
+                            ${featureIconOptions(icon)}
+                        </select>
                         <input type="text"
                             class="feature-title flex-1 border border-slate-300 rounded-md p-2 bg-white text-slate-800 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
                             placeholder="Feature title" value="${title}">
@@ -387,11 +516,17 @@
             }
 
             function addFeatureRow(feature) {
-                $('#featuresContainer').append(featureRowTemplate(feature));
+                const $row = $(featureRowTemplate(feature));
+                $('#featuresContainer').append($row);
+                initFeatureIconSelect($row.find('.feature-icon'));
                 refreshFeaturesEmpty();
             }
 
             function removeFeatureRow(button) {
+                const $select = $(button).closest('.feature-row').find('.feature-icon');
+                if ($select.hasClass('select2-hidden-accessible')) {
+                    $select.select2('destroy');
+                }
                 $(button).closest('.feature-row').remove();
                 refreshFeaturesEmpty();
             }
@@ -399,7 +534,9 @@
             function packageFeatures(id) {
                 let url = "{{ route('packages.features', ':id') }}".replace(':id', id);
 
-                $.get(url, function(res) {
+                $.when(loadIconOptions(), $.get(url)).done(function(_iconsRes, packageRes) {
+                    const res = Array.isArray(packageRes) ? packageRes[0] : packageRes;
+
                     if (res.status !== 'success') {
                         Swal.fire('Error', res.message || 'Package not found.', 'error');
                         return;
@@ -506,13 +643,14 @@
                     filter: 'button, a, input, select',
                     onEnd: function() {
                         const table = $('#packageTable').DataTable();
+                        const pageStart = table.page.info().start;
                         const order = Array.from(tbody.querySelectorAll('tr'))
                             .map(tr => table.row(tr).data()?.id)
                             .filter(id => id !== undefined);
 
                         if (order.length === 0) return;
 
-                        $.post("{{ route('packages.reorder') }}", { order: order }, function(res) {
+                        $.post("{{ route('packages.reorder') }}", { order: order, start: pageStart }, function(res) {
                             if (res.status === 'success' || res.status === true) {
                                 Swal.fire({
                                     toast: true,

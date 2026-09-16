@@ -8,7 +8,7 @@
     @endif
 
     <button onclick="{{ $edit }}({{ $id }})"
-        class="bg-blue-900 text-white px-2 py-1 rounded text-sm hover:bg-blue-600 mr-2">
+        class="bg-[#047354] text-white px-2 py-1 rounded text-sm hover:bg-blue-600 mr-2">
         <i class="fa fa-pencil"></i>
     </button>
 

@@ -5,7 +5,7 @@
     'maxWidth' => 'max-w-lg',
     'submitBtnId' => 'saveBtn',
     'submitBtnText' => 'Save Changes',
-    'submitBtnColor' => 'bg-blue-900 hover:bg-blue-700',
+    'submitBtnColor' => 'bg-[#047354] hover:bg-blue-700',
     'submitOnClick' => 'saveForm()'
 ])
 

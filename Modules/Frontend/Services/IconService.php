@@ -15,14 +15,14 @@ class IconService
     public function getIconDataTable(Request $request)
     {
         $query = Icon::select(
-                'icons.id',
-                'icons.name',
-                'icons.class',
-                'icons.keywords',
-                'icons.sort_order',
-                'icons.is_active',
-                'icons.created_at'
-            )
+            'icons.id',
+            'icons.name',
+            'icons.class',
+            'icons.keywords',
+            'icons.sort_order',
+            'icons.is_active',
+            'icons.created_at'
+        )
             ->orderBy('icons.sort_order')
             ->orderBy('icons.id');
 
@@ -167,9 +167,9 @@ class IconService
 
     /**
      * Persist the new sort order after drag & drop —
-     * each array position becomes the sort_order (1, 2, 3...).
+     * each array position becomes the sort_order, offset by the current page.
      */
-    public function reorderIcons(array $orderedIds): array
+    public function reorderIcons(array $orderedIds, int $start = 0): array
     {
         try {
             if (empty($orderedIds)) {
@@ -179,9 +179,9 @@ class IconService
                 ];
             }
 
-            return DB::transaction(function () use ($orderedIds) {
+            return DB::transaction(function () use ($orderedIds, $start) {
                 foreach ($orderedIds as $index => $id) {
-                    Icon::where('id', (int) $id)->update(['sort_order' => $index + 1]);
+                    Icon::where('id', (int) $id)->update(['sort_order' => $start + $index + 1]);
                 }
 
                 return [

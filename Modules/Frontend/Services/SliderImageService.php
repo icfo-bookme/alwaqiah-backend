@@ -17,13 +17,13 @@ class SliderImageService
     public function getSliderImageDataTable(Request $request)
     {
         $query = SliderImage::select(
-                'slider_images.id',
-                'slider_images.image',
-                'slider_images.sort_order',
-                'slider_images.is_active',
-                'slider_images.published_at',
-                'slider_images.created_at'
-            )
+            'slider_images.id',
+            'slider_images.image',
+            'slider_images.sort_order',
+            'slider_images.is_active',
+            'slider_images.published_at',
+            'slider_images.created_at'
+        )
             ->orderBy('slider_images.sort_order')
             ->orderBy('slider_images.id');
 
@@ -34,7 +34,7 @@ class SliderImageService
         return DataTables::of($query)
             ->addIndexColumn()
             ->editColumn('image', function (SliderImage $slider) {
-                return '<img src="' . asset('storage/' . $slider->image) . '" alt="' . e(basename($slider->image)) . '" class="h-10 w-16 rounded-md object-cover ring-1 ring-gray-200">';
+                return '<img src="'.asset('storage/'.$slider->image).'" alt="'.e(basename($slider->image)).'" class="h-10 w-16 rounded-md object-cover ring-1 ring-gray-200">';
             })
             ->editColumn('is_active', function (SliderImage $slider) {
                 return statusBadge($slider->is_active);
@@ -49,8 +49,8 @@ class SliderImageService
             })
             ->addColumn('action', function (SliderImage $slider) {
                 return view('components.action-buttons', [
-                    'id'     => $slider->id,
-                    'edit'   => 'sliderImageEdit',
+                    'id' => $slider->id,
+                    'edit' => 'sliderImageEdit',
                     'delete' => 'sliderImageDelete',
                 ])->render();
             })
@@ -66,7 +66,7 @@ class SliderImageService
     {
         try {
             return DB::transaction(function () use ($data) {
-                $userId       = auth()->id();
+                $userId = auth()->id();
                 $createdCount = 0;
 
                 // Auto sort_order — one higher than the current maximum,
@@ -79,26 +79,26 @@ class SliderImageService
                     }
 
                     SliderImage::create([
-                        'image'        => $this->storeImage($file),
-                        'sort_order'   => $nextSort++,
-                        'is_active'    => $data['is_active'] ?? true,
+                        'image' => $this->storeImage($file),
+                        'sort_order' => $nextSort++,
+                        'is_active' => $data['is_active'] ?? true,
                         'published_at' => now(), // Auto-set on creation (frontend does not send it)
-                        'created_by'   => $userId,
-                        'updated_by'   => $userId,
+                        'created_by' => $userId,
+                        'updated_by' => $userId,
                     ]);
 
                     $createdCount++;
                 }
 
                 return [
-                    'status'  => 'success',
-                    'message' => $createdCount . ' slider image(s) uploaded successfully.',
+                    'status' => 'success',
+                    'message' => $createdCount.' slider image(s) uploaded successfully.',
                 ];
             });
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error uploading slider images: ' . $e->getMessage(),
+                'status' => 'error',
+                'message' => 'Error uploading slider images: '.$e->getMessage(),
             ];
         }
     }
@@ -123,16 +123,16 @@ class SliderImageService
                 $slider->update($data);
 
                 return [
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Slider image updated successfully.',
-                    'slider'  => $slider->fresh(),
+                    'slider' => $slider->fresh(),
                 ];
             });
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error updating slider image: ' . $e->getMessage(),
-                'slider'  => null,
+                'status' => 'error',
+                'message' => 'Error updating slider image: '.$e->getMessage(),
+                'slider' => null,
             ];
         }
     }
@@ -144,15 +144,16 @@ class SliderImageService
     {
         try {
             $slider = SliderImage::findOrFail($id);
+
             return [
                 'status' => 'success',
                 'slider' => $slider,
             ];
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'Slider image not found.',
-                'slider'  => null,
+                'slider' => null,
             ];
         }
     }
@@ -170,48 +171,86 @@ class SliderImageService
                 $slider->delete();
 
                 return [
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Slider image deleted successfully.',
                 ];
             });
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error deleting slider image: ' . $e->getMessage(),
+                'status' => 'error',
+                'message' => 'Error deleting slider image: '.$e->getMessage(),
             ];
         }
     }
 
     /**
      * Persist the new sort order after drag & drop —
-     * each array position becomes the sort_order (1, 2, 3...).
+     * each array position becomes the sort_order, offset by the current page.
      */
-    public function reorderSliderImages(array $orderedIds): array
+    public function reorderSliderImages(array $orderedIds, int $start = 0): array
     {
         try {
             if (empty($orderedIds)) {
                 return [
-                    'status'  => 'error',
+                    'status' => 'error',
                     'message' => 'No order provided.',
                 ];
             }
 
-            return DB::transaction(function () use ($orderedIds) {
+            return DB::transaction(function () use ($orderedIds, $start) {
                 foreach ($orderedIds as $index => $id) {
-                    SliderImage::where('id', (int) $id)->update(['sort_order' => $index + 1]);
+                    SliderImage::where('id', (int) $id)->update(['sort_order' => $start + $index + 1]);
                 }
 
                 return [
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Slider order updated successfully.',
                 ];
             });
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error updating slider order: ' . $e->getMessage(),
+                'status' => 'error',
+                'message' => 'Error updating slider order: '.$e->getMessage(),
             ];
         }
+    }
+
+    /**
+     * Frontend API: all active slider images, ordered for display.
+     */
+    public function getFrontendSliders(): array
+    {
+        $sliders = SliderImage::where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get([
+                'id',
+                'image',
+                'alt_text',
+                'sort_order',
+                'published_at',
+            ]);
+
+        return [
+            'status' => 'success',
+            'count' => $sliders->count(),
+            'sliders' => $sliders->map(fn (SliderImage $slider) => $this->formatFrontendSlider($slider))->values()->all(),
+        ];
+    }
+
+    /**
+     * Shape a slider for frontend consumption (full image URL resolved).
+     */
+    private function formatFrontendSlider(SliderImage $slider): array
+    {
+        return [
+            'id' => $slider->id,
+            'alt_text' => $slider->alt_text,
+            'image' => $slider->image,
+            'image_url' => $slider->image_url,
+            'sort_order' => $slider->sort_order,
+            'published_at' => $slider->published_at?->format('Y-m-d H:i:s'),
+        ];
     }
 
     /**
