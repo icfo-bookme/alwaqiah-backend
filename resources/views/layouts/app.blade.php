@@ -91,63 +91,45 @@
         (function() {
             'use strict';
 
-            const loader = document.getElementById('global-loader');
-            if (!loader) return;
+            var isInitialPageLoad = true;
 
-            let pendingAjax = 0;
-
-            // DataTables already show their own "processing" overlay — don't double up
-            function isDataTableRequest() {
-                const hasDataTable = typeof $.fn.DataTable !== 'undefined' && $.fn.DataTable.tables().length > 0;
-                return hasDataTable ||
-                    $('.dataTables_processing:visible').length > 0 ||
+            function isDataTableProcessing() {
+                return $('.dataTables_processing:visible').length > 0 ||
                     $('body').hasClass('dt-custom-loading');
             }
 
-            function showLoader() {
-                loader.classList.remove('opacity-0', 'pointer-events-none', 'invisible');
-                loader.classList.add('opacity-100', 'pointer-events-auto');
-            }
-
             function hideLoader() {
-                loader.classList.add('opacity-0', 'pointer-events-none');
-                // Fully detach from the page once the fade transition has finished
-                window.setTimeout(function() {
-                    if (loader.classList.contains('opacity-0')) {
-                        loader.classList.add('invisible');
-                    }
-                }, 320);
+                if (!isDataTableProcessing()) {
+                    $('#global-loader').addClass('hidden');
+                    isInitialPageLoad = false;
+                }
             }
 
-            // Show / hide around global AJAX activity (skips DataTable requests)
+            // Ajax lifecycle
             $(document).on('ajaxStart', function() {
-                if (isDataTableRequest()) return;
-                pendingAjax++;
-                showLoader();
+                if (isInitialPageLoad && !isDataTableProcessing()) {
+                    $('#global-loader').removeClass('hidden');
+                }
             });
 
             $(document).on('ajaxStop', function() {
-                if (isDataTableRequest()) return;
-                pendingAjax = Math.max(0, pendingAjax - 1);
-                if (pendingAjax === 0) hideLoader();
+                setTimeout(hideLoader, 100);
             });
 
-            // Always end the loader once the page has fully loaded.
-            // This is the key fix: pages without AJAX (e.g. the Dashboard) now also hide it.
-            function hideAfterPageLoad() {
-                window.setTimeout(function() {
-                    if (pendingAjax === 0) hideLoader();
-                }, 250);
-            }
-
+            // Page load complete
             if (document.readyState === 'complete') {
-                hideAfterPageLoad();
+                hideLoader();
             } else {
-                $(window).on('load', hideAfterPageLoad);
+                $(window).on('load', hideLoader);
             }
 
-            // Safety net: never let the loader stay visible for more than ~4s
-            window.setTimeout(hideLoader, 4000);
+            // CSRF token for all ajax requests
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
         })();
     </script>
 
