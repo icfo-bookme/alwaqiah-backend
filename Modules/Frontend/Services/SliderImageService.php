@@ -62,46 +62,52 @@ class SliderImageService
      * Upload multiple slider images at once — each selected file
      * becomes its own slider record.
      */
-    public function saveSliderImages(array $data): array
-    {
-        try {
-            return DB::transaction(function () use ($data) {
-                $userId = auth()->id();
-                $createdCount = 0;
+   public function saveSliderImages(array $data): array
+{
+    $storedImages = [];
 
-                // Auto sort_order — one higher than the current maximum,
-                // incremented per file so each record is unique (1, 2, 3...).
-                $nextSort = ((int) SliderImage::max('sort_order')) + 1;
-
-                foreach ($data['images'] as $file) {
-                    if (! $file instanceof UploadedFile) {
-                        continue;
-                    }
-
-                    SliderImage::create([
-                        'image' => $this->storeImage($file),
-                        'sort_order' => $nextSort++,
-                        'is_active' => $data['is_active'] ?? true,
-                        'published_at' => now(), // Auto-set on creation (frontend does not send it)
-                        'created_by' => $userId,
-                        'updated_by' => $userId,
-                    ]);
-
-                    $createdCount++;
-                }
-
-                return [
-                    'status' => 'success',
-                    'message' => $createdCount.' slider image(s) uploaded successfully.',
-                ];
-            });
-        } catch (\Exception $e) {
-            return [
-                'status' => 'error',
-                'message' => 'Error uploading slider images: '.$e->getMessage(),
-            ];
+    try {
+        foreach ($data['images'] as $file) {
+            if ($file instanceof UploadedFile) {
+                $storedImages[] = $this->storeImage($file);
+            }
         }
+
+        DB::transaction(function () use ($data, $storedImages) {
+
+            $userId = auth()->id();
+
+            $nextSort = ((int) SliderImage::max('sort_order')) + 1;
+
+            foreach ($storedImages as $path) {
+                SliderImage::create([
+                    'image' => $path,
+                    'sort_order' => $nextSort++,
+                    'is_active' => $data['is_active'] ?? true,
+                    'published_at' => now(),
+                    'created_by' => $userId,
+                    'updated_by' => $userId,
+                ]);
+            }
+        });
+
+        return [
+            'status' => 'success',
+            'message' => count($storedImages).' slider image(s) uploaded successfully.',
+        ];
+
+    } catch (\Exception $e) {
+
+        foreach ($storedImages as $path) {
+            Storage::disk('public')->delete($path);
+        }
+
+        return [
+            'status' => 'error',
+            'message' => 'Error uploading slider images: '.$e->getMessage(),
+        ];
     }
+}
 
     /**
      * Update a single slider record — replaces the stored image
