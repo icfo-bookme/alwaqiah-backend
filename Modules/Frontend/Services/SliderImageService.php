@@ -34,7 +34,7 @@ class SliderImageService
         return DataTables::of($query)
             ->addIndexColumn()
             ->editColumn('image', function (SliderImage $slider) {
-                return '<img src="'.asset('storage/'.$slider->image).'" alt="'.e(basename($slider->image)).'" class="h-10 w-16 rounded-md object-cover ring-1 ring-gray-200">';
+                return '<img src="' . asset('storage/' . $slider->image) . '" alt="' . e(basename($slider->image)) . '" class="h-10 w-16 rounded-md object-cover ring-1 ring-gray-200">';
             })
             ->editColumn('is_active', function (SliderImage $slider) {
                 return statusBadge($slider->is_active);
@@ -62,52 +62,51 @@ class SliderImageService
      * Upload multiple slider images at once — each selected file
      * becomes its own slider record.
      */
-   public function saveSliderImages(array $data): array
-{
-    $storedImages = [];
+    public function saveSliderImages(array $data): array
+    {
+        $storedImages = [];
 
-    try {
-        foreach ($data['images'] as $file) {
-            if ($file instanceof UploadedFile) {
-                $storedImages[] = $this->storeImage($file);
+        try {
+            foreach ($data['images'] as $file) {
+                if ($file instanceof UploadedFile) {
+                    $storedImages[] = $this->storeImage($file);
+                }
             }
-        }
 
-        DB::transaction(function () use ($data, $storedImages) {
+            DB::transaction(function () use ($data, $storedImages) {
 
-            $userId = auth()->id();
+                $userId = auth()->id();
 
-            $nextSort = ((int) SliderImage::max('sort_order')) + 1;
+                $nextSort = ((int) SliderImage::max('sort_order')) + 1;
+
+                foreach ($storedImages as $path) {
+                    SliderImage::create([
+                        'image' => $path,
+                        'sort_order' => $nextSort++,
+                        'is_active' => $data['is_active'] ?? true,
+                        'published_at' => now(),
+                        'created_by' => $userId,
+                        'updated_by' => $userId,
+                    ]);
+                }
+            });
+
+            return [
+                'status' => 'success',
+                'message' => count($storedImages) . ' slider image(s) uploaded successfully.',
+            ];
+        } catch (\Exception $e) {
 
             foreach ($storedImages as $path) {
-                SliderImage::create([
-                    'image' => $path,
-                    'sort_order' => $nextSort++,
-                    'is_active' => $data['is_active'] ?? true,
-                    'published_at' => now(),
-                    'created_by' => $userId,
-                    'updated_by' => $userId,
-                ]);
+                Storage::disk('public')->delete($path);
             }
-        });
 
-        return [
-            'status' => 'success',
-            'message' => count($storedImages).' slider image(s) uploaded successfully.',
-        ];
-
-    } catch (\Exception $e) {
-
-        foreach ($storedImages as $path) {
-            Storage::disk('public')->delete($path);
+            return [
+                'status' => 'error',
+                'message' => 'Error uploading slider images: ' . $e->getMessage(),
+            ];
         }
-
-        return [
-            'status' => 'error',
-            'message' => 'Error uploading slider images: '.$e->getMessage(),
-        ];
     }
-}
 
     /**
      * Update a single slider record — replaces the stored image
@@ -137,7 +136,7 @@ class SliderImageService
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Error updating slider image: '.$e->getMessage(),
+                'message' => 'Error updating slider image: ' . $e->getMessage(),
                 'slider' => null,
             ];
         }
@@ -184,7 +183,7 @@ class SliderImageService
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Error deleting slider image: '.$e->getMessage(),
+                'message' => 'Error deleting slider image: ' . $e->getMessage(),
             ];
         }
     }
@@ -216,7 +215,7 @@ class SliderImageService
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Error updating slider order: '.$e->getMessage(),
+                'message' => 'Error updating slider order: ' . $e->getMessage(),
             ];
         }
     }
@@ -240,7 +239,7 @@ class SliderImageService
         return [
             'status' => 'success',
             'count' => $sliders->count(),
-            'sliders' => $sliders->map(fn (SliderImage $slider) => $this->formatFrontendSlider($slider))->values()->all(),
+            'sliders' => $sliders->map(fn(SliderImage $slider) => $this->formatFrontendSlider($slider))->values()->all(),
         ];
     }
 
