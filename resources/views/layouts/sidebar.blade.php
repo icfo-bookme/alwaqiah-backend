@@ -74,8 +74,6 @@
             <span class="nav-label font-semibold">Flights</span>
         </a>
 
-     
-
         <!-- FAQs -->
         <a href="{{ route('faqs.index') }}"
             class="nav-item flex items-center gap-2.5 px-2 py-1 rounded-lg text-gray-500  text-sm font-medium transition-colors duration-150 mb-1 

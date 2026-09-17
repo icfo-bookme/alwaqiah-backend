@@ -31,7 +31,7 @@ class StoreSliderImageRequest extends FormRequest
             'images.*'   => [
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:2048',
+                'max:20048',
             ],
             'is_active'  => 'nullable|boolean',
         ];
@@ -48,7 +48,7 @@ class StoreSliderImageRequest extends FormRequest
             'images.min'      => 'Please select at least one slider image.',
             'images.*.image'  => 'Each uploaded file must be a valid image.',
             'images.*.mimes'  => 'Each slider image must be a file of type: jpg, jpeg, png, webp.',
-            'images.*.max'    => 'Each slider image may not be greater than 2MB.',
+            'images.*.max'    => 'Each slider image may not be greater than 20MB.',
         ];
     }
 }
