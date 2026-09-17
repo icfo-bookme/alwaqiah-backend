@@ -108,7 +108,7 @@
 
             {{-- Short Description --}}
             <div class="mb-4 animate-fade" style="animation-delay: 400ms;">
-                <x-form-textarea label="Short Description" name="short_description" id="short_description"
+                <x-form-textarea label="Short Description (use for SEO/Meta Description)" name="short_description" id="short_description"
                     placeholder="Short summary (optional)" />
             </div>
 
