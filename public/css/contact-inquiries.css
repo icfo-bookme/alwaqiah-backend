@@ -1,0 +1,63 @@
+/* ==================================================================
+   Contact Inquiries page styles
+   ------------------------------------------------------------------
+   Used by : Modules/Frontend/resources/views/contact-inquiries/index.blade.php
+   Loaded  : @push('head') in that view  ->  @stack('head')
+             in resources/views/layouts/app.blade.php
+   ================================================================== */
+
+/* ---------- Keep contact details on a single line ---------- */
+#inquiryTable tbody td:nth-child(2),
+#inquiryTable tbody td:nth-child(3) {
+    white-space: nowrap;
+}
+
+/* ---------- Message column needs room to be readable ---------- */
+#inquiryTable tbody td:nth-child(4) {
+    min-width: 240px;
+}
+
+/* ---------- Status badge must never wrap onto two lines ---------- */
+#inquiryTable tbody td .inline-flex {
+    white-space: nowrap;
+}
+
+/* ---------- "Inquiry Details" popup : readable message block ---------- */
+.inquiry-view__meta {
+    text-align: left;
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 0.75rem;
+}
+
+.inquiry-view__label {
+    text-align: left;
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #94a3b8;
+    margin-bottom: 0.15rem;
+}
+
+.inquiry-view__value {
+    text-align: left;
+    display: block;
+    color: #1e293b;
+    margin-bottom: 0.85rem;
+    word-break: break-word;
+}
+
+/* Preserve the line breaks the visitor typed in the message field */
+.inquiry-view__message {
+    white-space: pre-line;
+    text-align: left;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    color: #334155;
+    max-height: 260px;
+    overflow-y: auto;
+}

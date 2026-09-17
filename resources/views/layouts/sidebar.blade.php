@@ -92,5 +92,14 @@
             <span class="nav-label font-semibold">Icons</span>
         </a>
 
+        <!-- Contact Inquiries -->
+        <a href="{{ route('contact-inquiries.index') }}"
+            class="nav-item flex items-center gap-2.5 px-2 py-1 rounded-lg text-gray-500  text-sm font-medium transition-colors duration-150 mb-1 
+    {{ request()->routeIs('contact-inquiries.*') ? 'bg-[#047354] text-white active' : 'text-gray-500 ' }}"
+            data-label="Inquiries">
+            <i class="fa-solid fa-envelope-open-text w-4 text-center flex-shrink-0 text-base"></i>
+            <span class="nav-label font-semibold">Inquiries</span>
+        </a>
+
     </nav>
 </aside>

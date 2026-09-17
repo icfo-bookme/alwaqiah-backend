@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Frontend\Http\Controllers\ContactInquiryController;
 use Modules\Frontend\Http\Controllers\FaqController;
 use Modules\Frontend\Http\Controllers\FlightController;
 use Modules\Frontend\Http\Controllers\IconController;
@@ -35,4 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('faqs', FaqController::class)->except(['create', 'edit'])->names('faqs');
     Route::get('/dataTable/faqs', [FaqController::class, 'dataTable'])->name('faqs.dataTable');
     Route::post('faqs/reorder', [FaqController::class, 'reorder'])->name('faqs.reorder');
+
+    Route::resource('contact-inquiries', ContactInquiryController::class)->except(['create', 'edit'])->names('contact-inquiries');
+    Route::get('/dataTable/contact-inquiries', [ContactInquiryController::class, 'dataTable'])->name('contact-inquiries.dataTable');
 });

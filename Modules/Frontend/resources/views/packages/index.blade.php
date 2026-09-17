@@ -143,81 +143,12 @@
         <p id="featuresEmpty" class="text-sm text-slate-400 italic mt-2">No features added yet.</p>
     </x-drawer>
 
+    @push('head')
+        <link rel="stylesheet"
+            href="{{ asset('css/packages.css') }}?v={{ filemtime(public_path('css/packages.css')) }}">
+    @endpush
+
     @push('scripts')
-        <style>
-            #packageTable tbody tr {
-                cursor: grab;
-            }
-
-            #packageTable tbody tr:active {
-                cursor: grabbing;
-            }
-
-            #packageTable tbody tr.sortable-ghost {
-                opacity: 0.4;
-                background: #ecfdf5;
-            }
-
-            #features-drawer .select2-container {
-                width: 38% !important;
-                flex-shrink: 0;
-            }
-
-            #features-drawer .select2-container .select2-selection--single {
-                height: 42px;
-                border-color: #cbd5e1;
-                border-radius: 0.375rem;
-                display: flex;
-                align-items: center;
-            }
-
-            #features-drawer .select2-container--default .select2-selection--single .select2-selection__rendered {
-                color: #334155;
-                line-height: 40px;
-                padding-left: 0.75rem;
-                padding-right: 1.75rem;
-                width: 100%;
-            }
-
-            #features-drawer .select2-container--default .select2-selection--single .select2-selection__arrow {
-                height: 40px;
-            }
-
-            #features-drawer .select2-container--default .select2-selection--single .select2-selection__clear {
-                display: none;
-            }
-
-            .feature-icon-option {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                min-width: 0;
-            }
-
-            .feature-icon-option i {
-                width: 1.25rem;
-                flex-shrink: 0;
-                text-align: center;
-                color: #047354;
-            }
-
-            .feature-icon-option span {
-                display: block;
-                min-width: 0;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
-            .feature-icon-result {
-                padding: 0.15rem 0;
-            }
-
-            .feature-icon-result span {
-                white-space: normal;
-                line-height: 1.35;
-            }
-        </style>
         <script>
             let isSaving = false;
 
