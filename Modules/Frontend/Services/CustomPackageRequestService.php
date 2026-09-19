@@ -38,6 +38,13 @@ class CustomPackageRequestService
 
         return DataTables::of($query)
             ->addIndexColumn()
+            // Global search on "airline_name" must hit airlines.name, not a
+            // column on the base table (aliased join column).
+            ->filterColumn('airline_name', function ($query, $keyword) {
+                $query->where('airlines.name', 'like', "%{$keyword}%");
+            })
+            // Column header sorting on "airline_name".
+            ->orderColumn('airline_name', 'airlines.name $1')
             ->editColumn('name', function (CustomPackageRequest $request) {
                 return '<div>'
                     .'<span class="font-medium text-gray-800">'.e($request->name).'</span>'

@@ -41,6 +41,13 @@ class FlightService
 
         return DataTables::of($query)
             ->addIndexColumn()
+            // Global search on "airline_name" must hit airlines.name, not a
+            // column on the base table (aliased join column).
+            ->filterColumn('airline_name', function ($query, $keyword) {
+                $query->where('airlines.name', 'like', "%{$keyword}%");
+            })
+            // Column header sorting on "airline_name".
+            ->orderColumn('airline_name', 'airlines.name $1')
             ->editColumn('airline_name', function (Flight $flight) {
                 // Aliases selected from the joined airlines table.
                 $logo = $flight->airline_logo
