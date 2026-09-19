@@ -44,19 +44,11 @@
         <form id="flightForm">
             <input type="hidden" name="id" id="flight_id">
 
-            {{-- Airline Name --}}
-            <div class="mb-4 animate-fade" style="animation-delay: 150ms;">
-                <x-form-input label="Airline Name" name="airline_name" id="airline_name" placeholder="e.g. Biman Bangladesh Airlines"
-                    :required="true" />
-            </div>
-
-            {{-- Airline Logo --}}
-            <div class="mb-4 animate-fade" style="animation-delay: 200ms;">
-                <x-form-input label="Airline Logo" name="airline_logo" id="airline_logo" type="file"
-                    accept="image/png,image/jpeg,image/webp,image/svg+xml" onchange="previewLogo(this)" />
-                <p class="text-xs text-gray-400 mt-1">JPG, PNG, WEBP or SVG — max 2MB. <span id="logoKeepHint"
-                        class="hidden text-gray-500">Leave empty to keep the current logo.</span></p>
-                <div id="logoPreview" class="mt-2"></div>
+            {{-- Airline (dropdown from airlines table) --}}
+            <div class="mb-4 animate-fade" style="animation-delay: 100ms;">
+                <x-form-select label="Airline" name="airline_id" id="airline_id" :required="true">
+                    <option value="">Select airline</option>
+                </x-form-select>
             </div>
 
             {{-- Flight Number --}}
@@ -107,6 +99,7 @@
         </style>
         <script>
             let isSaving = false;
+            let airlineOptions = [];
 
             // Convert a stored datetime ("2026-09-19T14:30:00.000000Z" or
             // "2026-09-19 14:30:00") to the datetime-local input format,
@@ -117,32 +110,30 @@
                 return m ? `${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}` : '';
             }
 
-            // Local preview of the selected logo file
-            function previewLogo(input) {
-                $('#logoPreview').empty();
-                if (input.files && input.files[0]) {
-                    let reader = new FileReader();
-                    reader.onload = function(e) {
-                        $('#logoPreview').append(
-                            `<div class="flex items-center gap-2">
-                                <img src="${e.target.result}" class="h-12 w-12 rounded-lg object-contain ring-1 ring-gray-200 bg-white">
-                                <span class="text-xs text-gray-500">${input.files[0].name}</span>
-                            </div>`
-                        );
-                    };
-                    reader.readAsDataURL(input.files[0]);
-                }
+            // Load the active airlines from the database for the dropdown
+            function loadAirlineOptions(selectedId) {
+                return $.get("{{ route('airlines.options') }}", function(res) {
+                    airlineOptions = res.status === 'success' ? (res.airlines || []) : [];
+
+                    let options = '<option value="">Select airline</option>';
+                    airlineOptions.forEach(function(airline) {
+                        const label = airline.code ? `${airline.name} (${airline.code})` : airline.name;
+                        options += `<option value="${airline.id}" ${airline.id == selectedId ? 'selected' : ''}>${label}</option>`;
+                    });
+
+                    $('#airline_id').html(options);
+                }).fail(function() {
+                    $('#airline_id').html('<option value="">Select airline</option>');
+                });
             }
 
             function openFlightDrawer(mode, flight) {
                 $('#flightForm')[0].reset();
                 $('#flight_id').val('');
-                $('#logoPreview').empty();
-                $('#logoKeepHint').addClass('hidden');
 
                 if (mode === 'edit' && flight) {
+                    loadAirlineOptions(flight.airline_id);
                     $('#flight_id').val(flight.id);
-                    $('#airline_name').val(flight.airline_name ?? '');
                     $('#flight_number').val(flight.flight_number ?? '');
                     $('#departure_airport').val(flight.departure_airport ?? '');
                     $('#arrival_airport').val(flight.arrival_airport ?? '');
@@ -152,20 +143,10 @@
                     $('#return_at').val(toDatetimeLocal(flight.return_at));
                     $('#is_active').val(flight.is_active ? '1' : '0');
 
-                    // Show the current logo (kept unless a new file is chosen)
-                    if (flight.airline_logo_url) {
-                        $('#logoPreview').append(
-                            `<div class="flex items-center gap-2">
-                                <img src="${flight.airline_logo_url}" class="h-12 w-12 rounded-lg object-contain ring-1 ring-gray-200 bg-white">
-                                <span class="text-xs text-gray-500">Current logo</span>
-                            </div>`
-                        );
-                        $('#logoKeepHint').removeClass('hidden');
-                    }
-
                     $('#drawerTitle').text('Edit Flight');
                     $('#drawerButtonText').text('Update Flight');
                 } else {
+                    loadAirlineOptions('');
                     $('#is_active').val('1');
                     $('#drawerTitle').text('Add New Flight');
                     $('#drawerButtonText').text('Save Flight');

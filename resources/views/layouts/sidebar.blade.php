@@ -74,6 +74,15 @@
             <span class="nav-label font-semibold">Flights</span>
         </a>
 
+        <!-- Airlines -->
+        <a href="{{ route('airlines.index') }}"
+            class="nav-item flex items-center gap-2.5 px-2 py-1 rounded-lg text-gray-500  text-sm font-medium transition-colors duration-150 mb-1 
+    {{ request()->routeIs('airlines.index') ? 'bg-[#047354] text-white active' : 'text-gray-500 ' }}"
+            data-label="Airlines">
+            <i class="fa-solid fa-plane-departure w-4 text-center flex-shrink-0 text-base"></i>
+            <span class="nav-label font-semibold">Airlines</span>
+        </a>
+
         <!-- FAQs -->
         <a href="{{ route('faqs.index') }}"
             class="nav-item flex items-center gap-2.5 px-2 py-1 rounded-lg text-gray-500  text-sm font-medium transition-colors duration-150 mb-1 

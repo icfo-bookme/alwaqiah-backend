@@ -1,10 +1,4 @@
-/* ==================================================================
-   Contact Inquiries page styles
-   ------------------------------------------------------------------
-   Used by : Modules/Frontend/resources/views/contact-inquiries/index.blade.php
-   Loaded  : @push('head') in that view  ->  @stack('head')
-             in resources/views/layouts/app.blade.php
-   ================================================================== */
+
 
 /* ---------- Keep contact details on a single line ---------- */
 #inquiryTable tbody td:nth-child(2),

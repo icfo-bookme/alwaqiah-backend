@@ -20,8 +20,7 @@ class StoreFlightRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'airline_name'             => 'required|string|max:255',
-            'airline_logo'             => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'airline_id'               => 'required|integer|exists:airlines,id',
             'flight_number'            => 'nullable|string|max:255',
 
             'departure_airport'        => 'nullable|string|max:255',
@@ -42,13 +41,9 @@ class StoreFlightRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'airline_name.required' => 'Airline name is required.',
-            'airline_name.string'   => 'Airline name must be a valid text.',
-            'airline_name.max'      => 'Airline name may not be greater than 255 characters.',
-
-            'airline_logo.image'    => 'Airline logo must be a valid image file.',
-            'airline_logo.mimes'    => 'Airline logo must be a JPG, JPEG, PNG, WEBP or SVG image.',
-            'airline_logo.max'      => 'Airline logo may not be larger than 2 MB.',
+            'airline_id.required' => 'Airline is required.',
+            'airline_id.integer'  => 'Airline must be a valid selection.',
+            'airline_id.exists'   => 'The selected airline is invalid.',
 
             'flight_number.string'  => 'Flight number must be a valid text.',
             'flight_number.max'     => 'Flight number may not be greater than 255 characters.',

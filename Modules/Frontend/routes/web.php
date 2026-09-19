@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Frontend\Http\Controllers\ContactInquiryController;
+use Modules\Frontend\Http\Controllers\AirlineController;
 use Modules\Frontend\Http\Controllers\FaqController;
 use Modules\Frontend\Http\Controllers\FlightController;
 use Modules\Frontend\Http\Controllers\IconController;
@@ -10,6 +11,11 @@ use Modules\Frontend\Http\Controllers\SliderImageController;
 use Modules\Frontend\Http\Controllers\YoutubeVideoController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('airlines', AirlineController::class)->except(['create', 'edit'])->names('airlines');
+    Route::get('/dataTable/airlines', [AirlineController::class, 'dataTable'])->name('airlines.dataTable');
+    Route::post('airlines/reorder', [AirlineController::class, 'reorder'])->name('airlines.reorder');
+    Route::get('airlines/options/list', [AirlineController::class, 'options'])->name('airlines.options');
+
     Route::resource('flights', FlightController::class)->except(['create', 'edit'])->names('flights');
     Route::get('/dataTable/flights', [FlightController::class, 'dataTable'])->name('flights.dataTable');
     Route::post('flights/reorder', [FlightController::class, 'reorder'])->name('flights.reorder');

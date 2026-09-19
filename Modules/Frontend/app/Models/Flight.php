@@ -26,8 +26,7 @@ class Flight extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'airline_name',
-        'airline_logo',
+        'airline_id',
         'flight_number',
         'departure_airport',
         'arrival_airport',
@@ -56,9 +55,12 @@ class Flight extends Model
     ];
 
     /**
-     * Full public URL of the stored airline logo (available in JSON responses).
+     * The airline this flight belongs to.
      */
-    protected $appends = ['airline_logo_url'];
+    public function airline(): BelongsTo
+    {
+        return $this->belongsTo(Airline::class, 'airline_id');
+    }
 
     /**
      * Get the user who created this flight.
@@ -74,15 +76,5 @@ class Flight extends Model
     public function updatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by', 'id');
-    }
-
-    /**
-     * Get the full public URL of the stored airline logo.
-     */
-    public function getAirlineLogoUrlAttribute(): ?string
-    {
-        return $this->airline_logo
-            ? asset('storage/' . $this->airline_logo)
-            : null;
     }
 }

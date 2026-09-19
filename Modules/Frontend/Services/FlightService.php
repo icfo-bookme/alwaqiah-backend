@@ -3,9 +3,7 @@
 namespace Modules\Frontend\Services;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Modules\Frontend\Models\Flight;
 use Yajra\DataTables\DataTables;
 
@@ -18,8 +16,10 @@ class FlightService
     {
         $query = Flight::select(
             'flights.id',
-            'flights.airline_name',
-            'flights.airline_logo',
+            'flights.airline_id',
+            'airlines.name as airline_name',
+            'airlines.code as airline_code',
+            'airlines.logo as airline_logo',
             'flights.flight_number',
             'flights.departure_airport',
             'flights.arrival_airport',
@@ -31,6 +31,7 @@ class FlightService
             'flights.sort_order',
             'flights.created_at'
         )
+            ->join('airlines', 'airlines.id', '=', 'flights.airline_id')
             ->orderBy('flights.sort_order')
             ->orderBy('flights.id');
 
@@ -41,8 +42,9 @@ class FlightService
         return DataTables::of($query)
             ->addIndexColumn()
             ->editColumn('airline_name', function (Flight $flight) {
+                // Aliases selected from the joined airlines table.
                 $logo = $flight->airline_logo
-                    ? '<img src="'.$flight->airline_logo_url.'" alt="'.e($flight->airline_name).'" class="h-8 w-8 rounded-full object-contain ring-1 ring-gray-200 bg-white">'
+                    ? '<img src="'.asset('storage/'.$flight->airline_logo).'" alt="'.e($flight->airline_name).'" class="h-8 w-8 rounded-full object-contain ring-1 ring-gray-200 bg-white">'
                     : '<span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 ring-1 ring-gray-200"><i class="fa-solid fa-plane text-sm text-gray-500"></i></span>';
 
                 return '<div class="flex items-center gap-2">'
@@ -97,19 +99,14 @@ class FlightService
     }
 
     /**
-     * Create a new flight record — the airline logo (if any) is stored
-     * and sort_order is auto-assigned (one higher than the current maximum).
+     * Create a new flight record — sort_order is auto-assigned
+     * (one higher than the current maximum).
      */
     public function saveFlight(array $data): array
     {
         try {
             return DB::transaction(function () use ($data) {
                 $userId = auth()->id();
-
-                // Store the uploaded logo and keep only its path.
-                if (isset($data['airline_logo']) && $data['airline_logo'] instanceof UploadedFile) {
-                    $data['airline_logo'] = $this->storeLogo($data['airline_logo']);
-                }
 
                 // Auto sort_order — one higher than the current maximum.
                 $data['sort_order'] = ((int) Flight::max('sort_order')) + 1;
@@ -135,22 +132,13 @@ class FlightService
     }
 
     /**
-     * Update an existing flight record — the stored logo is replaced
-     * only when a new file is uploaded.
+     * Update an existing flight record.
      */
     public function updateFlight(array $data, int $id): array
     {
         try {
             return DB::transaction(function () use ($data, $id) {
                 $flight = Flight::findOrFail($id);
-
-                // Replace the logo only when a new file is uploaded.
-                if (isset($data['airline_logo']) && $data['airline_logo'] instanceof UploadedFile) {
-                    $this->deleteLogoFile($flight->airline_logo);
-                    $data['airline_logo'] = $this->storeLogo($data['airline_logo']);
-                } else {
-                    unset($data['airline_logo']);
-                }
 
                 $data['updated_by'] = auth()->id();
 
@@ -254,7 +242,8 @@ class FlightService
      */
     public function getFrontendFlights(): array
     {
-        $flights = Flight::where('is_active', true)
+        $flights = Flight::with('airline')
+            ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
@@ -267,15 +256,17 @@ class FlightService
     }
 
     /**
-     * Shape a flight for frontend consumption (logo URL + datetimes resolved).
+     * Shape a flight for frontend consumption (airline data + datetimes resolved).
      */
     private function formatFrontendFlight(Flight $flight): array
     {
         return [
             'id' => $flight->id,
-            'airline_name' => $flight->airline_name,
-            'airline_logo' => $flight->airline_logo,
-            'airline_logo_url' => $flight->airline_logo_url,
+            'airline_id' => $flight->airline_id,
+            'airline_name' => $flight->airline?->name,
+            'airline_code' => $flight->airline?->code,
+            'airline_logo' => $flight->airline?->logo,
+            'airline_logo_url' => $flight->airline?->logo_url,
             'flight_number' => $flight->flight_number,
             'departure_airport' => $flight->departure_airport,
             'arrival_airport' => $flight->arrival_airport,
@@ -285,23 +276,5 @@ class FlightService
             'return_at' => $flight->return_at?->format('Y-m-d H:i:s'),
             'sort_order' => $flight->sort_order,
         ];
-    }
-
-    /**
-     * Store an uploaded airline logo on the public disk and return the path.
-     */
-    private function storeLogo(UploadedFile $file): string
-    {
-        return $file->store('flights', 'public');
-    }
-
-    /**
-     * Delete a stored airline logo file from the public disk if it exists.
-     */
-    private function deleteLogoFile(?string $path): void
-    {
-        if ($path && Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
-        }
     }
 }
