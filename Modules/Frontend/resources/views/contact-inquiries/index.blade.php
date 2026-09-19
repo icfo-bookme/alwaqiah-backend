@@ -85,6 +85,26 @@
         </form>
     </x-drawer>
 
+    {{-- VIEW DRAWER — inquiry details slide-over (replaces the old SweetAlert modal) --}}
+    <x-drawer id="inquiry-view-drawer" overlayId="inquiry-view-overlay" title="Inquiry Details" maxWidth="max-w-xl"
+        titleId="inquiryViewDrawerTitle" submitBtnTextId="inquiryViewDrawerBtnText"
+        submitBtnId="viewDrawerActionBtn" submitBtnText="Update" submitBtnIcon="fa fa-pencil"
+        submitOnClick="viewDrawerUpdate()">
+        <div id="inquiryViewMeta" class="inquiry-view__meta"></div>
+
+        <label class="inquiry-view__label">Name</label>
+        <span class="inquiry-view__value" id="inquiryViewName"></span>
+
+        <label class="inquiry-view__label">Phone</label>
+        <span class="inquiry-view__value" id="inquiryViewPhone"></span>
+
+        <label class="inquiry-view__label">Email</label>
+        <span class="inquiry-view__value" id="inquiryViewEmail"></span>
+
+        <label class="inquiry-view__label">Message</label>
+        <div class="inquiry-view__message" id="inquiryViewMessage"></div>
+    </x-drawer>
+
     {{-- Page specific CSS (kept out of this file): public/css/contact-inquiries.css --}}
     @push('head')
         <link rel="stylesheet"
@@ -95,7 +115,7 @@
         <script>
             let isSaving = false;
 
-            // Escape values before injecting them into popup HTML.
+            // Escape values before injecting them into drawer HTML.
             function inquiryEsc(value) {
                 return $('<div>').text(value ?? '').html();
             }
@@ -163,6 +183,21 @@
                 });
             }
 
+            let viewedInquiry = null;
+
+            // Status -> [label, badge classes] — mirrors ContactInquiryService::statusBadge()
+            const INQUIRY_STATUS_BADGES = {
+                new: ['New', 'bg-blue-50 text-blue-700'],
+                contacted: ['Contacted', 'bg-amber-50 text-amber-700'],
+                resolved: ['Resolved', 'bg-emerald-50 text-emerald-700'],
+            };
+
+            function inquiryStatusBadge(status) {
+                const [label, classes] = INQUIRY_STATUS_BADGES[status] ?? ['Unknown', 'bg-gray-100 text-gray-700'];
+                return '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium '
+                    + classes + '">' + inquiryEsc(label) + '</span>';
+            }
+
             function inquiryView(id) {
                 let getUrl = "{{ route('contact-inquiries.show', ':id') }}".replace(':id', id);
 
@@ -173,37 +208,31 @@
                     }
 
                     const q = res.inquiry;
+                    viewedInquiry = q;
                     const updatedBy = q.updatedBy?.name ? q.updatedBy.name : '—';
 
-                    Swal.fire({
-                        title: 'Inquiry Details',
-                        width: 640,
-                        html: '<div class="inquiry-view__meta">' +
-                            'Received: <strong>' + inquiryEsc(inquiryDate(q.created_at)) + '</strong>' +
-                            ' &nbsp;&bull;&nbsp; Status: <strong>' + inquiryEsc(q.status) + '</strong>' +
-                            ' &nbsp;&bull;&nbsp; Last updated by: <strong>' + inquiryEsc(updatedBy) + '</strong>' +
-                            '</div>' +
-                            '<label class="inquiry-view__label">Name</label>' +
-                            '<span class="inquiry-view__value">' + inquiryEsc(q.name) + '</span>' +
-                            '<label class="inquiry-view__label">Phone</label>' +
-                            '<span class="inquiry-view__value">' + inquiryEsc(q.phone) + '</span>' +
-                            '<label class="inquiry-view__label">Email</label>' +
-                            '<span class="inquiry-view__value">' + inquiryEsc(q.email || '—') + '</span>' +
-                            '<label class="inquiry-view__label">Message</label>' +
-                            '<div class="inquiry-view__message">' + inquiryEsc(q.message || '—') + '</div>',
-                        confirmButtonText: 'Close',
-                        confirmButtonColor: '#047354',
-                        showCancelButton: true,
-                        cancelButtonText: '<i class="fa fa-pencil"></i> Update',
-                        cancelButtonColor: '#4b5563',
-                    }).then((result) => {
-                        if (result.dismiss === Swal.DismissReason.cancel) {
-                            openInquiryDrawer('edit', q);
-                        }
-                    });
+                    $('#inquiryViewMeta').html(
+                        'Received: <strong>' + inquiryEsc(inquiryDate(q.created_at)) + '</strong>' +
+                        ' &nbsp;&bull;&nbsp; ' + inquiryStatusBadge(q.status) +
+                        ' &nbsp;&bull;&nbsp; Last updated by: <strong>' + inquiryEsc(updatedBy) + '</strong>'
+                    );
+                    $('#inquiryViewName').text(q.name ?? '—');
+                    $('#inquiryViewPhone').text(q.phone ?? '—');
+                    $('#inquiryViewEmail').text(q.email || '—');
+                    $('#inquiryViewMessage').text(q.message || '—');
+
+                    openGlobalDrawer('inquiry-view-drawer', 'inquiry-view-overlay');
                 }).fail(function() {
                     Swal.fire('Error', 'Failed to communicate with server.', 'error');
                 });
+            }
+
+            // Footer "Update" button of the view drawer — closes the view and
+            // opens the edit drawer prefilled with the inquiry being viewed.
+            function viewDrawerUpdate() {
+                if (!viewedInquiry) return;
+                closeGlobalDrawer('inquiry-view-drawer', 'inquiry-view-overlay');
+                openInquiryDrawer('edit', viewedInquiry);
             }
 
             function saveInquiry() {

@@ -22,7 +22,7 @@
     white-space: nowrap;
 }
 
-/* ---------- "Inquiry Details" popup : readable message block ---------- */
+/* ---------- "Inquiry Details" view drawer : readable message block ---------- */
 .inquiry-view__meta {
     text-align: left;
     font-size: 0.8rem;
@@ -60,4 +60,10 @@
     color: #334155;
     max-height: 260px;
     overflow-y: auto;
+}
+
+/* Inside the view drawer the drawer body already scrolls,
+   so the message block can grow as tall as it needs */
+#inquiry-view-drawer .inquiry-view__message {
+    max-height: none;
 }

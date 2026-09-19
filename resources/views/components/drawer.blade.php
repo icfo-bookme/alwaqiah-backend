@@ -3,13 +3,18 @@
     'overlayId' => 'drawer-overlay',
     'title' => 'Form Window',
     'maxWidth' => 'max-w-lg',
+    // Unique element ids — pass custom ones when a page renders more than
+    // one drawer, so JS selectors never cross between drawers.
+    'titleId' => 'drawerTitle',
     'submitBtnId' => 'saveBtn',
+    'submitBtnTextId' => 'drawerButtonText',
     'submitBtnText' => 'Save Changes',
     'submitBtnColor' => 'bg-[#047354] hover:bg-blue-700',
+    'submitBtnIcon' => 'fa fa-save',
     'submitOnClick' => 'saveForm()'
 ])
 
-<div id="{{ e($overlayId) }}" 
+<div id="{{ e($overlayId) }}"
      class="fixed inset-0 bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none z-40 transition-opacity duration-300 ease-in-out">
 </div>
 
@@ -18,7 +23,7 @@
     class="fixed right-0 top-0 h-screen w-full {{ e($maxWidth) }} bg-white shadow-2xl z-50 flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out">
 
     <div class="px-6 py-5 border-b bg-gradient-to-r from-blue-50 to-blue-100 flex justify-between items-center">
-        <h2 class="text-2xl font-bold text-gray-800" id="drawerTitle">{{ e($title) }}</h2>
+        <h2 class="text-2xl font-bold text-gray-800" id="{{ e($titleId) }}">{{ e($title) }}</h2>
 
         <button type="button" onclick="closeGlobalDrawer('{{ $id }}', '{{ $overlayId }}')"
             class="text-gray-500 hover:text-red-600 p-1 hover:bg-red-50 rounded-lg transition-colors duration-200">
@@ -38,8 +43,8 @@
 
         <button type="button" id="{{ e($submitBtnId) }}" onclick="{{ $submitOnClick }}"
             class="flex-1 {{ e($submitBtnColor) }} text-white rounded p-2 font-medium flex justify-center gap-2 items-center transition-colors duration-200">
-            <i class="fa fa-save"></i>
-            <span id="drawerButtonText">{{ e($submitBtnText) }}</span>
+            <i class="{{ e($submitBtnIcon) }}"></i>
+            <span id="{{ e($submitBtnTextId) }}">{{ e($submitBtnText) }}</span>
         </button>
     </div>
 </div>
