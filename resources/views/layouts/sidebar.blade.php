@@ -110,5 +110,14 @@
             <span class="nav-label font-semibold">Inquiries</span>
         </a>
 
+        <!-- Custom Package Requests -->
+        <a href="{{ route('custom-package-requests.index') }}"
+            class="nav-item flex items-center gap-2.5 px-2 py-1 rounded-lg text-gray-500  text-sm font-medium transition-colors duration-150 mb-1 
+    {{ request()->routeIs('custom-package-requests.*') ? 'bg-[#047354] text-white active' : 'text-gray-500 ' }}"
+            data-label="Package Requests">
+            <i class="fa-solid fa-file-signature w-4 text-center flex-shrink-0 text-base"></i>
+            <span class="nav-label font-semibold">Package Requests</span>
+        </a>
+
     </nav>
 </aside>

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Frontend\Http\Controllers\ContactInquiryController;
+use Modules\Frontend\Http\Controllers\CustomPackageRequestController;
 use Modules\Frontend\Http\Controllers\AirlineController;
 use Modules\Frontend\Http\Controllers\FaqController;
 use Modules\Frontend\Http\Controllers\FlightController;
@@ -45,4 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('contact-inquiries', ContactInquiryController::class)->except(['create', 'edit'])->names('contact-inquiries');
     Route::get('/dataTable/contact-inquiries', [ContactInquiryController::class, 'dataTable'])->name('contact-inquiries.dataTable');
+
+    Route::resource('custom-package-requests', CustomPackageRequestController::class)->except(['create', 'edit'])->names('custom-package-requests');
+    Route::get('/dataTable/custom-package-requests', [CustomPackageRequestController::class, 'dataTable'])->name('custom-package-requests.dataTable');
 });

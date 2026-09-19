@@ -3,7 +3,9 @@
 // Frontend-facing (public) API endpoints for the Frontend module.
 
 use Illuminate\Support\Facades\Route;
+use Modules\Frontend\Http\Controllers\Api\AirlineApiController;
 use Modules\Frontend\Http\Controllers\Api\ContactInquiryApiController;
+use Modules\Frontend\Http\Controllers\Api\CustomPackageRequestApiController;
 use Modules\Frontend\Http\Controllers\Api\FaqApiController;
 use Modules\Frontend\Http\Controllers\Api\FlightApiController;
 use Modules\Frontend\Http\Controllers\Api\PackageApiController;
@@ -25,6 +27,11 @@ Route::prefix('flights')->name('flights.')->group(function () {
     Route::get('/', [FlightApiController::class, 'index'])->name('index');
 });
 
+// Public API — no auth middleware, used by the frontend to show airlines.
+Route::prefix('airlines')->name('airlines.')->group(function () {
+    Route::get('/', [AirlineApiController::class, 'index'])->name('index');
+});
+
 // Public API — no auth middleware, used by the frontend to show FAQs.
 Route::prefix('faqs')->name('faqs.')->group(function () {
     Route::get('/', [FaqApiController::class, 'index'])->name('index');
@@ -38,4 +45,9 @@ Route::prefix('youtube-videos')->name('youtube-videos.')->group(function () {
 // Public API — no auth middleware, used by the frontend "contact us" form.
 Route::prefix('contact-inquiries')->name('contact-inquiries.')->group(function () {
     Route::post('/', [ContactInquiryApiController::class, 'store'])->name('store');
+});
+
+// Public API — no auth middleware, used by the frontend custom package form.
+Route::prefix('custom-package-requests')->name('custom-package-requests.')->group(function () {
+    Route::post('/', [CustomPackageRequestApiController::class, 'store'])->name('store');
 });
