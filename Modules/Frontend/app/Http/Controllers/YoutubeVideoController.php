@@ -39,6 +39,7 @@ class YoutubeVideoController extends Controller
     public function store(StoreYoutubeVideoRequest $request)
     {
         $result = $this->youtubeVideoService->saveYoutubeVideo($request->validated());
+
         return response()->json($result);
     }
 
@@ -48,6 +49,7 @@ class YoutubeVideoController extends Controller
     public function show($id)
     {
         $result = $this->youtubeVideoService->getYoutubeVideoById((int) $id);
+
         return response()->json($result);
     }
 
@@ -57,6 +59,7 @@ class YoutubeVideoController extends Controller
     public function update(UpdateYoutubeVideoRequest $request, $id)
     {
         $result = $this->youtubeVideoService->updateYoutubeVideo($request->validated(), (int) $id);
+
         return response()->json($result);
     }
 
@@ -77,6 +80,7 @@ class YoutubeVideoController extends Controller
     public function destroy($id)
     {
         $result = $this->youtubeVideoService->deleteYoutubeVideo((int) $id);
+
         return response()->json($result);
     }
 }

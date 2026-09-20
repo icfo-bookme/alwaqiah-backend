@@ -102,7 +102,7 @@ class ContactInquiryTest extends TestCase
         $inquiry = ContactInquiry::create(['name' => 'Karim', 'phone' => '01712345678']);
 
         $this->actingAs($this->admin())
-            ->getJson('/contact-inquiries/' . $inquiry->id)
+            ->getJson('/contact-inquiries/'.$inquiry->id)
             ->assertOk()
             ->assertJsonPath('status', 'success')
             ->assertJsonPath('inquiry.name', 'Karim');
@@ -114,7 +114,7 @@ class ContactInquiryTest extends TestCase
         $inquiry = ContactInquiry::create(['name' => 'Karim', 'phone' => '01712345678']);
 
         $this->actingAs($admin)
-            ->putJson('/contact-inquiries/' . $inquiry->id, [
+            ->putJson('/contact-inquiries/'.$inquiry->id, [
                 'name' => 'Karim',
                 'phone' => '01712345678',
                 'status' => 'contacted',
@@ -134,7 +134,7 @@ class ContactInquiryTest extends TestCase
         $inquiry = ContactInquiry::create(['name' => 'Karim', 'phone' => '01712345678']);
 
         $this->actingAs($this->admin())
-            ->putJson('/contact-inquiries/' . $inquiry->id, [
+            ->putJson('/contact-inquiries/'.$inquiry->id, [
                 'name' => 'Karim',
                 'phone' => '01712345678',
                 'status' => 'pending',
@@ -148,7 +148,7 @@ class ContactInquiryTest extends TestCase
         $inquiry = ContactInquiry::create(['name' => 'Karim', 'phone' => '01712345678']);
 
         $this->actingAs($this->admin())
-            ->deleteJson('/contact-inquiries/' . $inquiry->id)
+            ->deleteJson('/contact-inquiries/'.$inquiry->id)
             ->assertOk()
             ->assertJsonPath('status', 'success');
 

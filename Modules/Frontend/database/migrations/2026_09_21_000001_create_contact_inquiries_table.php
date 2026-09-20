@@ -24,7 +24,7 @@ return new class extends Migration
             $table->enum('status', [
                 'new',
                 'contacted',
-                'resolved'
+                'resolved',
             ])->default('new');
 
             // User tracking

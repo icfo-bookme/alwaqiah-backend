@@ -15,10 +15,15 @@ class CustomPackageRequest extends Model
     protected $table = 'custom_package_requests';
 
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_CONTACTED = 'contacted';
+
     public const STATUS_PROCESSING = 'processing';
+
     public const STATUS_QUOTED = 'quoted';
+
     public const STATUS_CONFIRMED = 'confirmed';
+
     public const STATUS_CANCELLED = 'cancelled';
 
     protected $fillable = [
@@ -51,12 +56,12 @@ class CustomPackageRequest extends Model
     public static function statuses(): array
     {
         return [
-            'pending'    => 'Pending',
-            'contacted'  => 'Contacted',
+            'pending' => 'Pending',
+            'contacted' => 'Contacted',
             'processing' => 'Processing',
-            'quoted'     => 'Quoted',
-            'confirmed'  => 'Confirmed',
-            'cancelled'  => 'Cancelled',
+            'quoted' => 'Quoted',
+            'confirmed' => 'Confirmed',
+            'cancelled' => 'Cancelled',
         ];
     }
 

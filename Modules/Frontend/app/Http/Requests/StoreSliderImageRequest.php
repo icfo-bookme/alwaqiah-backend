@@ -23,17 +23,17 @@ class StoreSliderImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'images'     => [
+            'images' => [
                 'required',
                 'array',
                 'min:1',
             ],
-            'images.*'   => [
+            'images.*' => [
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'max:20048',
             ],
-            'is_active'  => 'nullable|boolean',
+            'is_active' => 'nullable|boolean',
         ];
     }
 
@@ -44,11 +44,11 @@ class StoreSliderImageRequest extends FormRequest
     {
         return [
             'images.required' => 'Please select at least one slider image.',
-            'images.array'    => 'Slider images must be an array of files.',
-            'images.min'      => 'Please select at least one slider image.',
-            'images.*.image'  => 'Each uploaded file must be a valid image.',
-            'images.*.mimes'  => 'Each slider image must be a file of type: jpg, jpeg, png, webp.',
-            'images.*.max'    => 'Each slider image may not be greater than 20MB.',
+            'images.array' => 'Slider images must be an array of files.',
+            'images.min' => 'Please select at least one slider image.',
+            'images.*.image' => 'Each uploaded file must be a valid image.',
+            'images.*.mimes' => 'Each slider image must be a file of type: jpg, jpeg, png, webp.',
+            'images.*.max' => 'Each slider image may not be greater than 20MB.',
         ];
     }
 }

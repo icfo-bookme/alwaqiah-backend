@@ -28,7 +28,7 @@ return new class extends Migration
 
             $table->enum('package_type', [
                 'hajj',
-                'umrah'
+                'umrah',
             ])->default('umrah');
 
             $table->boolean('is_featured')->default(false);

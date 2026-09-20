@@ -22,7 +22,9 @@ class ContactInquiry extends Model
      * Follow up statuses (mirrors the enum column on the table).
      */
     public const STATUS_NEW = 'new';
+
     public const STATUS_CONTACTED = 'contacted';
+
     public const STATUS_RESOLVED = 'resolved';
 
     /**
@@ -67,9 +69,9 @@ class ContactInquiry extends Model
     public static function statuses(): array
     {
         return [
-            self::STATUS_NEW       => 'New',
+            self::STATUS_NEW => 'New',
             self::STATUS_CONTACTED => 'Contacted',
-            self::STATUS_RESOLVED  => 'Resolved',
+            self::STATUS_RESOLVED => 'Resolved',
         ];
     }
 

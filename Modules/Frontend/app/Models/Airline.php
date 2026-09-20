@@ -43,7 +43,7 @@ class Airline extends Model
      */
     protected $casts = [
         'sort_order' => 'integer',
-        'is_active'  => 'boolean',
+        'is_active' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -83,7 +83,7 @@ class Airline extends Model
     public function getLogoUrlAttribute(): ?string
     {
         return $this->logo
-            ? asset('storage/' . $this->logo)
+            ? asset('storage/'.$this->logo)
             : null;
     }
 }

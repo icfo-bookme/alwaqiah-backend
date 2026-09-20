@@ -197,12 +197,12 @@ class CustomPackageRequestService
     private function statusBadge(?string $status): string
     {
         $classes = [
-            CustomPackageRequest::STATUS_PENDING    => 'bg-blue-50 text-blue-700',
-            CustomPackageRequest::STATUS_CONTACTED  => 'bg-amber-50 text-amber-700',
+            CustomPackageRequest::STATUS_PENDING => 'bg-blue-50 text-blue-700',
+            CustomPackageRequest::STATUS_CONTACTED => 'bg-amber-50 text-amber-700',
             CustomPackageRequest::STATUS_PROCESSING => 'bg-indigo-50 text-indigo-700',
-            CustomPackageRequest::STATUS_QUOTED     => 'bg-purple-50 text-purple-700',
-            CustomPackageRequest::STATUS_CONFIRMED  => 'bg-emerald-50 text-emerald-700',
-            CustomPackageRequest::STATUS_CANCELLED  => 'bg-red-50 text-red-700',
+            CustomPackageRequest::STATUS_QUOTED => 'bg-purple-50 text-purple-700',
+            CustomPackageRequest::STATUS_CONFIRMED => 'bg-emerald-50 text-emerald-700',
+            CustomPackageRequest::STATUS_CANCELLED => 'bg-red-50 text-red-700',
         ];
 
         $label = CustomPackageRequest::statuses()[$status] ?? 'Unknown';

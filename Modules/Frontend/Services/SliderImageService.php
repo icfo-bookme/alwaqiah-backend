@@ -34,7 +34,7 @@ class SliderImageService
         return DataTables::of($query)
             ->addIndexColumn()
             ->editColumn('image', function (SliderImage $slider) {
-                return '<img src="' . asset('storage/' . $slider->image) . '" alt="' . e(basename($slider->image)) . '" class="h-10 w-16 rounded-md object-cover ring-1 ring-gray-200">';
+                return '<img src="'.asset('storage/'.$slider->image).'" alt="'.e(basename($slider->image)).'" class="h-10 w-16 rounded-md object-cover ring-1 ring-gray-200">';
             })
             ->editColumn('is_active', function (SliderImage $slider) {
                 return statusBadge($slider->is_active);
@@ -93,7 +93,7 @@ class SliderImageService
 
             return [
                 'status' => 'success',
-                'message' => count($storedImages) . ' slider image(s) uploaded successfully.',
+                'message' => count($storedImages).' slider image(s) uploaded successfully.',
             ];
         } catch (\Exception $e) {
 
@@ -103,7 +103,7 @@ class SliderImageService
 
             return [
                 'status' => 'error',
-                'message' => 'Error uploading slider images: ' . $e->getMessage(),
+                'message' => 'Error uploading slider images: '.$e->getMessage(),
             ];
         }
     }
@@ -136,7 +136,7 @@ class SliderImageService
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Error updating slider image: ' . $e->getMessage(),
+                'message' => 'Error updating slider image: '.$e->getMessage(),
                 'slider' => null,
             ];
         }
@@ -183,7 +183,7 @@ class SliderImageService
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Error deleting slider image: ' . $e->getMessage(),
+                'message' => 'Error deleting slider image: '.$e->getMessage(),
             ];
         }
     }
@@ -215,7 +215,7 @@ class SliderImageService
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
-                'message' => 'Error updating slider order: ' . $e->getMessage(),
+                'message' => 'Error updating slider order: '.$e->getMessage(),
             ];
         }
     }
@@ -239,7 +239,7 @@ class SliderImageService
         return [
             'status' => 'success',
             'count' => $sliders->count(),
-            'sliders' => $sliders->map(fn(SliderImage $slider) => $this->formatFrontendSlider($slider))->values()->all(),
+            'sliders' => $sliders->map(fn (SliderImage $slider) => $this->formatFrontendSlider($slider))->values()->all(),
         ];
     }
 

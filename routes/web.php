@@ -12,12 +12,12 @@ Route::get('/dashboard', function () {
     return view('dashboard', [
         'stats' => [
             'packages' => Package::count(),
-            'flights'  => Flight::count(),
-            'sliders'  => SliderImage::count(),
-            'videos'   => YoutubeVideo::count(),
-            'icons'    => Icon::count(),
+            'flights' => Flight::count(),
+            'sliders' => SliderImage::count(),
+            'videos' => YoutubeVideo::count(),
+            'icons' => Icon::count(),
         ],
-        'recentFlights'  => Flight::latest()->limit(5)->get(),
+        'recentFlights' => Flight::latest()->limit(5)->get(),
         'recentPackages' => Package::latest()->limit(5)->get(),
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');

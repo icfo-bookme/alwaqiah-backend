@@ -20,9 +20,9 @@ class StoreIconRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => ['required', 'string', 'max:255'],
-            'class'     => ['required', 'string', 'max:100', 'regex:/^fa[a-z-]* fa-[a-z0-9-]+$/', 'unique:icons,class'],
-            'keywords'  => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
+            'class' => ['required', 'string', 'max:100', 'regex:/^fa[a-z-]* fa-[a-z0-9-]+$/', 'unique:icons,class'],
+            'keywords' => ['nullable', 'string', 'max:255'],
             'is_active' => ['nullable', 'boolean'],
         ];
     }
@@ -35,18 +35,18 @@ class StoreIconRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required'  => 'The icon name is required.',
-            'name.string'    => 'The icon name must be a valid text.',
-            'name.max'       => 'The icon name may not be greater than 255 characters.',
+            'name.required' => 'The icon name is required.',
+            'name.string' => 'The icon name must be a valid text.',
+            'name.max' => 'The icon name may not be greater than 255 characters.',
 
             'class.required' => 'The icon class is required.',
-            'class.string'   => 'The icon class must be a valid text.',
-            'class.max'      => 'The icon class may not be greater than 100 characters.',
-            'class.regex'    => 'The icon class must be a valid Font Awesome class (e.g. fa-solid fa-hotel).',
-            'class.unique'   => 'This icon class already exists.',
+            'class.string' => 'The icon class must be a valid text.',
+            'class.max' => 'The icon class may not be greater than 100 characters.',
+            'class.regex' => 'The icon class must be a valid Font Awesome class (e.g. fa-solid fa-hotel).',
+            'class.unique' => 'This icon class already exists.',
 
             'keywords.string' => 'The keywords must be a valid text.',
-            'keywords.max'    => 'The keywords may not be greater than 255 characters.',
+            'keywords.max' => 'The keywords may not be greater than 255 characters.',
 
             'is_active.boolean' => 'The status must be either active or inactive.',
         ];

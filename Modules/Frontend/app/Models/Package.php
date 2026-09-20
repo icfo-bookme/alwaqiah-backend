@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Package extends Model
 {
-    use SoftDeletes;
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'packages';
 
@@ -36,12 +36,12 @@ class Package extends Model
 
     protected $casts = [
         'duration_days' => 'integer',
-        'price'         => 'decimal:2',
-        'is_featured'   => 'boolean',
-        'is_active'     => 'boolean',
-        'sort_order'    => 'integer',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
+        'price' => 'decimal:2',
+        'is_featured' => 'boolean',
+        'is_active' => 'boolean',
+        'sort_order' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**
@@ -88,7 +88,7 @@ class Package extends Model
     public function getThumbnailUrlAttribute(): ?string
     {
         return $this->thumbnail
-            ? asset('storage/' . $this->thumbnail)
+            ? asset('storage/'.$this->thumbnail)
             : null;
     }
 }

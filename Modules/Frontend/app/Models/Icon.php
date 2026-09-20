@@ -42,7 +42,7 @@ class Icon extends Model
      */
     protected $casts = [
         'sort_order' => 'integer',
-        'is_active'  => 'boolean',
+        'is_active' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

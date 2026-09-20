@@ -22,13 +22,13 @@ class UpdateSliderImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image'      => [
+            'image' => [
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'max:2048',
             ],
-            'is_active'  => 'nullable|boolean',
+            'is_active' => 'nullable|boolean',
         ];
     }
 
@@ -38,9 +38,9 @@ class UpdateSliderImageRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'image.image'     => 'The uploaded file must be a valid image.',
-            'image.mimes'     => 'Slider image must be a file of type: jpg, jpeg, png, webp.',
-            'image.max'       => 'Slider image may not be greater than 2MB.',
+            'image.image' => 'The uploaded file must be a valid image.',
+            'image.mimes' => 'Slider image must be a file of type: jpg, jpeg, png, webp.',
+            'image.max' => 'Slider image may not be greater than 2MB.',
         ];
     }
 }

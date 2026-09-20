@@ -73,7 +73,7 @@ class IconSeeder extends Seeder
             ['Flag', 'fa-solid fa-flag', 'flag, country, bangladesh'],
         ];
 
-        $userId    = auth()->id();
+        $userId = auth()->id();
         $sortOrder = ((int) Icon::max('sort_order'));
 
         foreach ($icons as [$name, $class, $keywords]) {
@@ -85,11 +85,11 @@ class IconSeeder extends Seeder
             }
 
             Icon::create([
-                'name'       => $name,
-                'class'      => $class,
-                'keywords'   => $keywords,
+                'name' => $name,
+                'class' => $class,
+                'keywords' => $keywords,
                 'sort_order' => $sortOrder,
-                'is_active'  => true,
+                'is_active' => true,
                 'created_by' => $userId,
                 'updated_by' => $userId,
             ]);

@@ -218,9 +218,9 @@ class ContactInquiryService
     private function statusBadge(?string $status): string
     {
         $classes = [
-            ContactInquiry::STATUS_NEW       => 'bg-blue-50 text-blue-700',
+            ContactInquiry::STATUS_NEW => 'bg-blue-50 text-blue-700',
             ContactInquiry::STATUS_CONTACTED => 'bg-amber-50 text-amber-700',
-            ContactInquiry::STATUS_RESOLVED  => 'bg-emerald-50 text-emerald-700',
+            ContactInquiry::STATUS_RESOLVED => 'bg-emerald-50 text-emerald-700',
         ];
 
         $label = ContactInquiry::statuses()[$status] ?? 'Unknown';

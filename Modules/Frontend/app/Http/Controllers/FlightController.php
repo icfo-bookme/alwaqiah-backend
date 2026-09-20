@@ -39,6 +39,7 @@ class FlightController extends Controller
     public function store(StoreFlightRequest $request)
     {
         $result = $this->flightService->saveFlight($request->validated());
+
         return response()->json($result);
     }
 
@@ -48,6 +49,7 @@ class FlightController extends Controller
     public function show($id)
     {
         $result = $this->flightService->getFlightById((int) $id);
+
         return response()->json($result);
     }
 
@@ -57,6 +59,7 @@ class FlightController extends Controller
     public function update(UpdateFlightRequest $request, $id)
     {
         $result = $this->flightService->updateFlight($request->validated(), (int) $id);
+
         return response()->json($result);
     }
 
@@ -77,6 +80,7 @@ class FlightController extends Controller
     public function destroy($id)
     {
         $result = $this->flightService->deleteFlight((int) $id);
+
         return response()->json($result);
     }
 }

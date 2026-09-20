@@ -34,12 +34,12 @@ class IconService
             ->addIndexColumn()
             ->editColumn('name', function (Icon $icon) {
                 return '<div class="flex items-center gap-2">'
-                    . '<i class="' . e($icon->class) . ' text-lg text-gray-700 w-6 text-center"></i>'
-                    . '<span>' . e($icon->name) . '</span>'
-                    . '</div>';
+                    .'<i class="'.e($icon->class).' text-lg text-gray-700 w-6 text-center"></i>'
+                    .'<span>'.e($icon->name).'</span>'
+                    .'</div>';
             })
             ->editColumn('class', function (Icon $icon) {
-                return '<code class="px-2 py-1 rounded bg-gray-100 text-xs text-gray-700">' . e($icon->class) . '</code>';
+                return '<code class="px-2 py-1 rounded bg-gray-100 text-xs text-gray-700">'.e($icon->class).'</code>';
             })
             ->editColumn('keywords', function (Icon $icon) {
                 return $icon->keywords ? e($icon->keywords) : '&mdash;';
@@ -52,8 +52,8 @@ class IconService
             })
             ->addColumn('action', function (Icon $icon) {
                 return view('components.action-buttons', [
-                    'id'     => $icon->id,
-                    'edit'   => 'iconEdit',
+                    'id' => $icon->id,
+                    'edit' => 'iconEdit',
                     'delete' => 'iconDelete',
                 ])->render();
             })
@@ -72,23 +72,23 @@ class IconService
 
                 // Auto sort_order — one higher than the current maximum.
                 $data['sort_order'] = ((int) Icon::max('sort_order')) + 1;
-                $data['is_active']  = $data['is_active'] ?? true;
+                $data['is_active'] = $data['is_active'] ?? true;
                 $data['created_by'] = $userId;
                 $data['updated_by'] = $userId;
 
                 $icon = Icon::create($data);
 
                 return [
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Icon created successfully.',
-                    'icon'    => $icon->fresh(),
+                    'icon' => $icon->fresh(),
                 ];
             });
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error saving icon: ' . $e->getMessage(),
-                'icon'    => null,
+                'status' => 'error',
+                'message' => 'Error saving icon: '.$e->getMessage(),
+                'icon' => null,
             ];
         }
     }
@@ -108,16 +108,16 @@ class IconService
                 $icon->update($data);
 
                 return [
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Icon updated successfully.',
-                    'icon'    => $icon->fresh(),
+                    'icon' => $icon->fresh(),
                 ];
             });
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error updating icon: ' . $e->getMessage(),
-                'icon'    => null,
+                'status' => 'error',
+                'message' => 'Error updating icon: '.$e->getMessage(),
+                'icon' => null,
             ];
         }
     }
@@ -130,13 +130,13 @@ class IconService
         try {
             return [
                 'status' => 'success',
-                'icon'   => Icon::findOrFail($id),
+                'icon' => Icon::findOrFail($id),
             ];
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'Icon not found.',
-                'icon'    => null,
+                'icon' => null,
             ];
         }
     }
@@ -153,14 +153,14 @@ class IconService
                 $icon->delete();
 
                 return [
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Icon deleted successfully.',
                 ];
             });
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error deleting icon: ' . $e->getMessage(),
+                'status' => 'error',
+                'message' => 'Error deleting icon: '.$e->getMessage(),
             ];
         }
     }
@@ -174,7 +174,7 @@ class IconService
         try {
             if (empty($orderedIds)) {
                 return [
-                    'status'  => 'error',
+                    'status' => 'error',
                     'message' => 'No order provided.',
                 ];
             }
@@ -185,14 +185,14 @@ class IconService
                 }
 
                 return [
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Icon order updated successfully.',
                 ];
             });
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error updating icon order: ' . $e->getMessage(),
+                'status' => 'error',
+                'message' => 'Error updating icon order: '.$e->getMessage(),
             ];
         }
     }
@@ -210,13 +210,13 @@ class IconService
 
             return [
                 'status' => 'success',
-                'icons'  => $icons,
+                'icons' => $icons,
             ];
         } catch (\Exception $e) {
             return [
-                'status'  => 'error',
-                'message' => 'Error loading icons: ' . $e->getMessage(),
-                'icons'   => [],
+                'status' => 'error',
+                'message' => 'Error loading icons: '.$e->getMessage(),
+                'icons' => [],
             ];
         }
     }

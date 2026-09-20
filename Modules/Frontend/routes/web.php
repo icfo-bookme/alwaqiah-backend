@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Frontend\Http\Controllers\AirlineController;
 use Modules\Frontend\Http\Controllers\ContactInquiryController;
 use Modules\Frontend\Http\Controllers\CustomPackageRequestController;
-use Modules\Frontend\Http\Controllers\AirlineController;
 use Modules\Frontend\Http\Controllers\FaqController;
 use Modules\Frontend\Http\Controllers\FlightController;
 use Modules\Frontend\Http\Controllers\IconController;

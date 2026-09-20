@@ -47,11 +47,11 @@ class Flight extends Model
      */
     protected $casts = [
         'departure_at' => 'datetime',
-        'return_at'    => 'datetime',
-        'sort_order'   => 'integer',
-        'is_active'    => 'boolean',
-        'created_at'   => 'datetime',
-        'updated_at'   => 'datetime',
+        'return_at' => 'datetime',
+        'sort_order' => 'integer',
+        'is_active' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**

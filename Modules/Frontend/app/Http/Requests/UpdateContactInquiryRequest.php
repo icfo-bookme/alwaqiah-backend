@@ -25,11 +25,11 @@ class UpdateContactInquiryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'    => ['required', 'string', 'max:150'],
-            'phone'   => ['required', 'string', 'max:20', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
-            'email'   => ['nullable', 'email', 'max:150'],
+            'name' => ['required', 'string', 'max:150'],
+            'phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9\s\-()]{6,20}$/'],
+            'email' => ['nullable', 'email', 'max:150'],
             'message' => ['nullable', 'string', 'max:65535'],
-            'status'  => [
+            'status' => [
                 'required',
                 Rule::in([
                     ContactInquiry::STATUS_NEW,
@@ -46,23 +46,23 @@ class UpdateContactInquiryRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required'  => 'Name is required.',
-            'name.string'    => 'Name must be a valid text.',
-            'name.max'       => 'Name may not be greater than 150 characters.',
+            'name.required' => 'Name is required.',
+            'name.string' => 'Name must be a valid text.',
+            'name.max' => 'Name may not be greater than 150 characters.',
 
             'phone.required' => 'Phone number is required.',
-            'phone.string'   => 'Phone number must be a valid text.',
-            'phone.max'      => 'Phone number may not be greater than 20 characters.',
-            'phone.regex'    => 'Phone number may only contain digits, spaces, +, - and ( )',
+            'phone.string' => 'Phone number must be a valid text.',
+            'phone.max' => 'Phone number may not be greater than 20 characters.',
+            'phone.regex' => 'Phone number may only contain digits, spaces, +, - and ( )',
 
-            'email.email'    => 'Please provide a valid email address.',
-            'email.max'      => 'Email may not be greater than 150 characters.',
+            'email.email' => 'Please provide a valid email address.',
+            'email.max' => 'Email may not be greater than 150 characters.',
 
             'message.string' => 'Message must be a valid text.',
-            'message.max'    => 'Message is too long.',
+            'message.max' => 'Message is too long.',
 
             'status.required' => 'Status is required.',
-            'status.in'       => 'Status must be one of: new, contacted or resolved.',
+            'status.in' => 'Status must be one of: new, contacted or resolved.',
         ];
     }
 
@@ -73,7 +73,7 @@ class UpdateContactInquiryRequest extends FormRequest
     {
         $this->merge([
             // Prevent empty-string fields from storing "" instead of NULL.
-            'email'   => $this->normalize($this->input('email')),
+            'email' => $this->normalize($this->input('email')),
             'message' => $this->normalize($this->input('message')),
         ]);
     }

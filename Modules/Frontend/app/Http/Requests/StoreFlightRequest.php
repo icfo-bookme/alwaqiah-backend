@@ -20,18 +20,18 @@ class StoreFlightRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'airline_id'               => 'required|integer|exists:airlines,id',
-            'flight_number'            => 'nullable|string|max:255',
+            'airline_id' => 'required|integer|exists:airlines,id',
+            'flight_number' => 'nullable|string|max:255',
 
-            'departure_airport'        => 'nullable|string|max:255',
-            'arrival_airport'          => 'nullable|string|max:255',
-            'departure_at'             => 'nullable|date',
+            'departure_airport' => 'nullable|string|max:255',
+            'arrival_airport' => 'nullable|string|max:255',
+            'departure_at' => 'nullable|date',
 
             'return_departure_airport' => 'nullable|string|max:255',
-            'return_arrival_airport'   => 'nullable|string|max:255',
-            'return_at'                => 'nullable|date|after_or_equal:departure_at',
+            'return_arrival_airport' => 'nullable|string|max:255',
+            'return_at' => 'nullable|date|after_or_equal:departure_at',
 
-            'is_active'                => 'nullable|boolean',
+            'is_active' => 'nullable|boolean',
         ];
     }
 
@@ -42,27 +42,27 @@ class StoreFlightRequest extends FormRequest
     {
         return [
             'airline_id.required' => 'Airline is required.',
-            'airline_id.integer'  => 'Airline must be a valid selection.',
-            'airline_id.exists'   => 'The selected airline is invalid.',
+            'airline_id.integer' => 'Airline must be a valid selection.',
+            'airline_id.exists' => 'The selected airline is invalid.',
 
-            'flight_number.string'  => 'Flight number must be a valid text.',
-            'flight_number.max'     => 'Flight number may not be greater than 255 characters.',
+            'flight_number.string' => 'Flight number must be a valid text.',
+            'flight_number.max' => 'Flight number may not be greater than 255 characters.',
 
-            'departure_airport.string'        => 'Departure airport must be a valid text.',
-            'departure_airport.max'           => 'Departure airport may not be greater than 255 characters.',
-            'arrival_airport.string'          => 'Arrival airport must be a valid text.',
-            'arrival_airport.max'             => 'Arrival airport may not be greater than 255 characters.',
+            'departure_airport.string' => 'Departure airport must be a valid text.',
+            'departure_airport.max' => 'Departure airport may not be greater than 255 characters.',
+            'arrival_airport.string' => 'Arrival airport must be a valid text.',
+            'arrival_airport.max' => 'Arrival airport may not be greater than 255 characters.',
 
-            'departure_at.date'               => 'Departure time must be a valid date & time.',
-            'return_at.date'                  => 'Return time must be a valid date & time.',
-            'return_at.after_or_equal'        => 'Return time must be after or equal to the departure time.',
+            'departure_at.date' => 'Departure time must be a valid date & time.',
+            'return_at.date' => 'Return time must be a valid date & time.',
+            'return_at.after_or_equal' => 'Return time must be after or equal to the departure time.',
 
             'return_departure_airport.string' => 'Return departure airport must be a valid text.',
-            'return_departure_airport.max'    => 'Return departure airport may not be greater than 255 characters.',
-            'return_arrival_airport.string'   => 'Return arrival airport must be a valid text.',
-            'return_arrival_airport.max'      => 'Return arrival airport may not be greater than 255 characters.',
+            'return_departure_airport.max' => 'Return departure airport may not be greater than 255 characters.',
+            'return_arrival_airport.string' => 'Return arrival airport must be a valid text.',
+            'return_arrival_airport.max' => 'Return arrival airport may not be greater than 255 characters.',
 
-            'is_active.boolean'               => 'The status must be either active or inactive.',
+            'is_active.boolean' => 'The status must be either active or inactive.',
         ];
     }
 
@@ -73,13 +73,13 @@ class StoreFlightRequest extends FormRequest
     {
         $this->merge([
             // Prevent empty-string fields from storing "" instead of NULL.
-            'flight_number'            => $this->normalize($this->input('flight_number')),
-            'departure_airport'        => $this->normalize($this->input('departure_airport')),
-            'arrival_airport'          => $this->normalize($this->input('arrival_airport')),
-            'departure_at'             => $this->normalize($this->input('departure_at')),
+            'flight_number' => $this->normalize($this->input('flight_number')),
+            'departure_airport' => $this->normalize($this->input('departure_airport')),
+            'arrival_airport' => $this->normalize($this->input('arrival_airport')),
+            'departure_at' => $this->normalize($this->input('departure_at')),
             'return_departure_airport' => $this->normalize($this->input('return_departure_airport')),
-            'return_arrival_airport'   => $this->normalize($this->input('return_arrival_airport')),
-            'return_at'                => $this->normalize($this->input('return_at')),
+            'return_arrival_airport' => $this->normalize($this->input('return_arrival_airport')),
+            'return_at' => $this->normalize($this->input('return_at')),
         ]);
     }
 

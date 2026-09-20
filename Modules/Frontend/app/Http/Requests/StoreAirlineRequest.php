@@ -20,9 +20,9 @@ class StoreAirlineRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => 'required|string|max:255',
-            'code'      => 'nullable|string|max:10',
-            'logo'      => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'name' => 'required|string|max:255',
+            'code' => 'nullable|string|max:10',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
             'is_active' => 'nullable|boolean',
         ];
     }
@@ -34,15 +34,15 @@ class StoreAirlineRequest extends FormRequest
     {
         return [
             'name.required' => 'Airline name is required.',
-            'name.string'   => 'Airline name must be a valid text.',
-            'name.max'      => 'Airline name may not be greater than 255 characters.',
+            'name.string' => 'Airline name must be a valid text.',
+            'name.max' => 'Airline name may not be greater than 255 characters.',
 
-            'code.string'   => 'Airline code must be a valid text.',
-            'code.max'      => 'Airline code may not be greater than 10 characters.',
+            'code.string' => 'Airline code must be a valid text.',
+            'code.max' => 'Airline code may not be greater than 10 characters.',
 
-            'logo.image'    => 'Logo must be a valid image file.',
-            'logo.mimes'    => 'Logo must be a JPG, JPEG, PNG, WEBP or SVG image.',
-            'logo.max'      => 'Logo may not be larger than 2 MB.',
+            'logo.image' => 'Logo must be a valid image file.',
+            'logo.mimes' => 'Logo must be a JPG, JPEG, PNG, WEBP or SVG image.',
+            'logo.max' => 'Logo may not be larger than 2 MB.',
 
             'is_active.boolean' => 'The status must be either active or inactive.',
         ];

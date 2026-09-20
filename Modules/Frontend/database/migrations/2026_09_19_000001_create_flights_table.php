@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('flights', function (Blueprint $table) {
             $table->id();
 
-            
             $table->string('airline_name');
             $table->string('airline_logo')->nullable();
             $table->string('flight_number')->nullable();
