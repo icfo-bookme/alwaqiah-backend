@@ -23,7 +23,7 @@
 
         </div>
         {{-- REUSABLE DATA-TABLE COMPONENT --}}
-        <x-data-table id="faqTable" title="FAQs" icon="fa-solid fa-circle-question" buttonId="btnAddFaq"
+        <x-data-table :reorderable="true" id="faqTable" title="FAQs" icon="fa-solid fa-circle-question" buttonId="btnAddFaq"
             buttonText="Add New FAQ" :columns="['Question', 'Answer', 'Sort', 'Status', 'Created At', 'Action']" :ajaxUrl="route('faqs.dataTable')" :dtColumns="[
                 ['data' => 'question'],
                 ['data' => 'answer'],
@@ -67,8 +67,6 @@
 
     @push('scripts')
         <style>
-            #faqTable tbody tr { cursor: grab; }
-            #faqTable tbody tr:active { cursor: grabbing; }
             #faqTable tbody tr.sortable-ghost { opacity: 0.4; background: #ecfdf5; }
         </style>
         <script>
@@ -207,6 +205,7 @@
 
                 tbody._sortableInstance = Sortable.create(tbody, {
                     animation: 150,
+                    handle: '.drag-handle',
                     ghostClass: 'sortable-ghost',
                     filter: 'button, a, input, select',
                     onEnd: function() {

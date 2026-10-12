@@ -23,7 +23,7 @@
 
         </div>
         {{-- REUSABLE DATA-TABLE COMPONENT --}}
-        <x-data-table id="flightTable" title="Flights" icon="fa-solid fa-plane" buttonId="btnAddFlight"
+        <x-data-table :reorderable="true" id="flightTable" title="Flights" icon="fa-solid fa-plane" buttonId="btnAddFlight"
             buttonText="Add New Flight" :columns="['Airline', 'Departure', 'Return', 'Sort', 'Status', 'Created At', 'Action']" :ajaxUrl="route('flights.dataTable')" :dtColumns="[
                 ['data' => 'airline_name'],
                 ['data' => 'departure_at'],
@@ -93,8 +93,6 @@
 
     @push('scripts')
         <style>
-            #flightTable tbody tr { cursor: grab; }
-            #flightTable tbody tr:active { cursor: grabbing; }
             #flightTable tbody tr.sortable-ghost { opacity: 0.4; background: #ecfdf5; }
         </style>
         <script>
@@ -278,6 +276,7 @@
 
                 tbody._sortableInstance = Sortable.create(tbody, {
                     animation: 150,
+                    handle: '.drag-handle',
                     ghostClass: 'sortable-ghost',
                     filter: 'button, a, input, select',
                     onEnd: function() {

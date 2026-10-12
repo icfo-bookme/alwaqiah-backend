@@ -23,7 +23,7 @@
 
         </div>
         {{-- REUSABLE DATA-TABLE COMPONENT --}}
-        <x-data-table id="youtubeVideoTable" title="YouTube Videos" icon="fa-brands fa-youtube" buttonId="btnAddVideo"
+        <x-data-table :reorderable="true" id="youtubeVideoTable" title="YouTube Videos" icon="fa-brands fa-youtube" buttonId="btnAddVideo"
             buttonText="Add New Video" :columns="['Thumbnail', 'Title', 'Video ID', 'Sort', 'Status', 'Published At', 'Created At', 'Action']" :ajaxUrl="route('youtube-videos.dataTable')" :dtColumns="[
                 ['data' => 'thumbnail', 'orderable' => false, 'searchable' => false],
                 ['data' => 'title'],
@@ -88,8 +88,6 @@
 
     @push('scripts')
         <style>
-            #youtubeVideoTable tbody tr { cursor: grab; }
-            #youtubeVideoTable tbody tr:active { cursor: grabbing; }
             #youtubeVideoTable tbody tr.sortable-ghost { opacity: 0.4; background: #ecfdf5; }
         </style>
         <script>
@@ -268,6 +266,7 @@
 
                 tbody._sortableInstance = Sortable.create(tbody, {
                     animation: 150,
+                    handle: '.drag-handle',
                     ghostClass: 'sortable-ghost',
                     filter: 'button, a, input, select',
                     onEnd: function() {

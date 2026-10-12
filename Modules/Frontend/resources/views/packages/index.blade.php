@@ -32,7 +32,7 @@
 
         </div>
         {{-- REUSABLE DATA-TABLE COMPONENT --}}
-        <x-data-table id="packageTable" title="Package Management" icon="fa-solid fa-kaaba"
+        <x-data-table :reorderable="true" id="packageTable" title="Package Management" icon="fa-solid fa-kaaba"
             buttonId="btnAddPackage" buttonText="Add New Package"
             :columns="['Thumbnail', 'Title', 'Type', 'Duration', 'Price', 'Featured', 'Sort', 'Status', 'Created At', 'Action']"
             :ajaxUrl="route('packages.dataTable')"
@@ -570,6 +570,7 @@
 
                 tbody._sortableInstance = Sortable.create(tbody, {
                     animation: 150,
+                    handle: '.drag-handle',
                     ghostClass: 'sortable-ghost',
                     filter: 'button, a, input, select',
                     onEnd: function() {

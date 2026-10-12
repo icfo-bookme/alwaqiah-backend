@@ -23,7 +23,7 @@
 
         </div>
         {{-- REUSABLE DATA-TABLE COMPONENT --}}
-        <x-data-table id="sliderImageTable" title="Slider Images" icon="fa-solid fa-images"
+        <x-data-table :reorderable="true" id="sliderImageTable" title="Slider Images" icon="fa-solid fa-images"
             buttonId="btnAddSlider" buttonText="Add New Images"
             :columns="['Image', 'Sort', 'Status', 'Published At', 'Created At', 'Action']"
             :ajaxUrl="route('slider-images.dataTable')"
@@ -68,8 +68,6 @@
 
     @push('scripts')
     <style>
-        #sliderImageTable tbody tr { cursor: grab; }
-        #sliderImageTable tbody tr:active { cursor: grabbing; }
         #sliderImageTable tbody tr.sortable-ghost { opacity: 0.4; background: #ecfdf5; }
     </style>
     <script>
@@ -296,6 +294,7 @@
 
             tbody._sortableInstance = Sortable.create(tbody, {
                 animation: 150,
+                handle: '.drag-handle',
                 ghostClass: 'sortable-ghost',
                 filter: 'button, a, input, select',
                 onEnd: function() {

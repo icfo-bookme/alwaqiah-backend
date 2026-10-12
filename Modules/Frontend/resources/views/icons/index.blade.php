@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <x-data-table id="iconTable" title="Icon Management" icon="fa-solid fa-icons"
+        <x-data-table :reorderable="true" id="iconTable" title="Icon Management" icon="fa-solid fa-icons"
             buttonId="btnAddIcon" buttonText="Add New Icon"
             :columns="['Name', 'Class', 'Keywords', 'Sort', 'Status', 'Created At', 'Action']"
             :ajaxUrl="route('icons.dataTable')"
@@ -77,14 +77,6 @@
 
     @push('scripts')
         <style>
-            #iconTable tbody tr {
-                cursor: grab;
-            }
-
-            #iconTable tbody tr:active {
-                cursor: grabbing;
-            }
-
             #iconTable tbody tr.sortable-ghost {
                 opacity: 0.4;
                 background: #ecfdf5;
@@ -245,6 +237,7 @@
 
                 tbody._sortableInstance = Sortable.create(tbody, {
                     animation: 150,
+                    handle: '.drag-handle',
                     ghostClass: 'sortable-ghost',
                     filter: 'button, a, input, select',
                     onEnd: function() {
